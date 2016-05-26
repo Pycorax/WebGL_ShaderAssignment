@@ -68,7 +68,7 @@ function MeshCreateCube()
     
     var tempColors = 
     [
-        [1.0, 0.68, 1.0, 1.0],       // Front Face: Orange
+        [1.0, 0.72, 0.0, 1.0],       // Front Face: Orange
         [1.0, 0.0, 0.0, 1.0],       // Back Face: Red
         [0.0, 1.0, 0.0, 1.0],       // Top Face: Green
         [0.0, 0.0, 1.0, 1.0],       // Bottom Face: Blue
@@ -101,9 +101,10 @@ function MeshCreateCube()
 /*
  * Variable Declaration and Definitions
  */
-var lastTime = 0;       // The previous frame's time
-var gl;                 // A global variable for the WebGL context
-var drawList = [];      // Store the list of objects we are drawing
+var timeSinceStart = 0.0;           // The time since the simulations tarted
+var lastTime = 0;                   // The previous frame's time
+var gl;                             // A global variable for the WebGL context
+var drawList = [];                  // Store the list of objects we are drawing
 // MVP
 var vMatrix = mat4.create();        // View Matrix
 var pMatrix = mat4.create();        // Projection Matrix
@@ -150,7 +151,11 @@ function Animate()
     var elapsed = timeNow - lastTime;       // DeltaTime
     // Set the current time to lastTime for the next frame
     lastTime = timeNow;
-    // TODO: Rotate the cube
+    // Update the time since start
+    timeSinceStart += elapsed;
+    // Rotate the cube
+    mat4.identity(mMatrix);
+    mat4.rotate(mMatrix, timeSinceStart * 0.001, [-1.0, 1.0, -1.0]);
 }
 
 function Draw()
@@ -187,7 +192,8 @@ function Draw()
     mat4.translate(vMatrix, [0.0, 0.0, -5.0]);      // Camera Position
     
     // Define the Model matrix
-    mat4.identity(mMatrix);
+    //mat4.identity(mMatrix);
+    //mat4.rotate(mMatrix, 45, [0.0, 1.0, 0.0]);
     
     // Drawing Objects
     for (var i = 0; i < drawList.length; ++i)
