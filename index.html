@@ -9,21 +9,36 @@
         <!-- Shaders -->
         <script id ="FragmentShader" type = "x-shader/x-fragment">
             precision mediump float;
+            
+            uniform vec3 lightPos;
+            
             //varying vec4 color;
             varying vec2 texCoord;
+            varying vec3 normal;
+            varying vec3 worldPos;
             
             uniform sampler2D uSampler;
             
             void main(void)
             {
-                //gl_FragColor = color;
-                gl_FragColor = texture2D(uSampler, vec2(texCoord.s, texCoord.t));
+                vec3 L, N;
+                N = normalize(normal);
+                L = normalize(lightPos - worldPos);
+                
+                float ndl = dot(N, L);
+                float dist = distance(lightPos, worldPos);
+                
+                vec4 diffuse = vec4(1, 1, 1, 1) * max(ndl, 0.0);
+                vec4 texColor = texture2D(uSampler, vec2(texCoord.s, texCoord.t));
+                
+                gl_FragColor = vec4(texColor.rgb * diffuse.rgb, texColor.a);
             }
        </script>
        
        <script id ="VertexShader" type = "x-shader/x-vertex">
             attribute vec3 vPos;
             // attribute vec4 vColor;
+            attribute vec3 vNorm;
             attribute vec2 vTex;
             
             uniform mat4 uMMatrix;
@@ -32,6 +47,8 @@
             
             //varying vec4 color;
             varying vec2 texCoord;
+            varying vec3 normal;
+            varying vec3 worldPos;
             
             void main(void)
             {
@@ -39,6 +56,8 @@
                 
                 //color = vColor;
                 texCoord = vTex;
+                normal = vNorm;
+                worldPos = (uMMatrix * vec4(vPos, 1.0)).xyz;
             }
        </script>
     </head>                                             

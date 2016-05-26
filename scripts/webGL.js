@@ -13,10 +13,14 @@ function Mesh()
     // Color
     this.colors = [];
     
+    // Normals
+    this.normals = [];
+    
     // Buffer IDs
     this.vertexBuffer = 0;
     this.indexBuffer = 0;
     this.colorBuffer = 0;
+    this.normalBuffer = 0;
     
     // Function Definitions
     this.CreateCube = MeshCreateCube;
@@ -90,7 +94,7 @@ function MeshCreateCube()
     }
     */
     
-    
+    // TexCoords
     this.colors =
     [
         // Front
@@ -139,6 +143,46 @@ function MeshCreateCube()
         12, 13, 14,     12, 14, 15,     // Bottom
         16, 17, 18,     16, 18, 19,     // Right
         20, 21, 22,     20, 22, 23      // Left
+    ];
+    
+    // Define the Normals
+    this.normals = 
+    [
+        // Front
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+        0.0, 0.0, 1.0,
+        
+        // Back
+        0.0, 0.0, -1.0,
+        0.0, 0.0, -1.0,
+        0.0, 0.0, -1.0,
+        0.0, 0.0, -1.0,
+        
+        // Top
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+        0.0, 1.0, 0.0,
+        
+        // Bottom
+        0.0, -1.0, 0.0,
+        0.0, -1.0, 0.0,
+        0.0, -1.0, 0.0,
+        0.0, -1.0, 0.0,
+        
+        // Right
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        1.0, 0.0, 0.0,
+        
+        // Left
+        -1.0, 0.0, 0.0,
+        -1.0, 0.0, 0.0,
+        -1.0, 0.0, 0.0,
+        -1.0, 0.0, 0.0
     ];
 }
 
@@ -205,7 +249,7 @@ function Animate()
 function Draw()
 {
     // Set the background color
-    gl.clearColor(0.137, 0.49, 0.45, 1.0);  
+    gl.clearColor(0.13, 0.16, 0.20, 1.0);  
     // Enable depth testing
     gl.enable(gl.DEPTH_TEST);
     // Set the size and position of the rendering context
@@ -226,12 +270,16 @@ function Draw()
     // -- Texture
     shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "vTex");
     gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
+    // -- Normal
+    shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "vNorm");
+    gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
     
     // Get the uniforms from the shader
     shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
     shaderProgram.vMatrixUniform = gl.getUniformLocation(shaderProgram, "uVMatrix");
     shaderProgram.mMatrixUniform = gl.getUniformLocation(shaderProgram, "uMMatrix");    
     shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
+    shaderProgram.lightPos = gl.getUniformLocation(shaderProgram, "lightPos");
 
     // Defining Projection Matrix
     mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 10000.0, pMatrix);
@@ -240,9 +288,8 @@ function Draw()
     mat4.identity(vMatrix);
     mat4.translate(vMatrix, [0.0, 0.0, -5.0]);      // Camera Position
     
-    // Define the Model matrix
-    //mat4.identity(mMatrix);
-    //mat4.rotate(mMatrix, 45, [0.0, 1.0, 0.0]);
+    // Define the lightPos
+    gl.uniform3f(shaderProgram.lightPos, 0, 10, -5);
     
     // Drawing Objects
     for (var i = 0; i < drawList.length; ++i)
@@ -265,6 +312,10 @@ function Draw()
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, mesh.tex);
         gl.uniform1i(shaderProgram.samplerUniform, 0);
+    
+        // Bind the normals
+        gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
+        gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
     
         // Send index data into shader
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
@@ -413,6 +464,11 @@ function SetupBuffers()
     mesh.indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(mesh.indices), gl.STATIC_DRAW);
+    
+    // Create the Normal Buffer and fill it up
+    mesh.normalBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.normals), gl.STATIC_DRAW);
     
     // Add a texture to it
     SetupTexture("scripts/cubeTex.png", mesh);
