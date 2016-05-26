@@ -9,29 +9,36 @@
         <!-- Shaders -->
         <script id ="FragmentShader" type = "x-shader/x-fragment">
             precision mediump float;
-            varying vec4 color;
+            //varying vec4 color;
+            varying vec2 texCoord;
+            
+            uniform sampler2D uSampler;
             
             void main(void)
             {
-                gl_FragColor = color;
+                //gl_FragColor = color;
+                gl_FragColor = texture2D(uSampler, vec2(texCoord.s, texCoord.t));
             }
        </script>
        
        <script id ="VertexShader" type = "x-shader/x-vertex">
             attribute vec3 vPos;
-            attribute vec4 vColor;
+            // attribute vec4 vColor;
+            attribute vec2 vTex;
             
             uniform mat4 uMMatrix;
             uniform mat4 uVMatrix;
             uniform mat4 uPMatrix;
             
-            varying vec4 color;
+            //varying vec4 color;
+            varying vec2 texCoord;
             
             void main(void)
             {
                 gl_Position = uPMatrix * uVMatrix * uMMatrix * vec4(vPos, 1.0);
                 
-                color = vColor;
+                //color = vColor;
+                texCoord = vTex;
             }
        </script>
     </head>                                             

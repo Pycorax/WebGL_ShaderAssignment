@@ -26,7 +26,6 @@ function Mesh()
 function MeshCreateCube()
 {
     // Vertices
-    
     this.vertices = 
     [
         // Front Face
@@ -66,6 +65,8 @@ function MeshCreateCube()
         -1.0, 1.0, -1.0,
     ];
     
+    /*
+    // Define Temporary Colours
     var tempColors = 
     [
         [1.0, 0.72, 0.0, 1.0],       // Front Face: Orange
@@ -76,6 +77,7 @@ function MeshCreateCube()
         [1.0, 0.0, 1.0, 1.0],       // Left Face: Purple  
     ];
     
+    // Set the colour for each side for each vertex
     for (var side = 0; side < 6; ++side)
     {
         var c = tempColors[side];
@@ -86,7 +88,49 @@ function MeshCreateCube()
             this.colors = this.colors.concat(c);
         }
     }
+    */
     
+    
+    this.colors =
+    [
+        // Front
+        0.0, 0.0,
+        1.0, 0.0,
+        1.0, 1.0,
+        0.0, 1.0,
+        
+        // Back
+        1.0, 0.0,
+        1.0, 1.0,
+        0.0, 1.0,
+        0.0, 0.0,
+        
+        // Top
+        0.0, 1.0,
+        0.0, 0.0,
+        1.0, 0.0,
+        1.0, 1.0,
+        
+        // Bottom
+        1.0, 1.0,
+        0.0, 1.0,
+        0.0, 0.0,
+        1.0, 0.0,
+        
+        // Right
+        1.0, 0.0,
+        1.0, 1.0,
+        0.0, 1.0,
+        0.0, 0.0,
+        
+        // Left
+        0.0, 0.0,
+        1.0, 0.0,
+        1.0, 1.0,
+        0.0, 1.0        
+    ]
+
+    // Define the indices
     this.indices = 
     [
         0, 1, 2,        0, 2, 3,        // Front
@@ -172,17 +216,22 @@ function Draw()
     // Specify which shader to use
     gl.useProgram(shaderProgram);
     
-    // Get the attributes for position and color from shader
+    // Get the attributes references from shader
+    // -- Position
     shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "vPos");
     gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-    
-    shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "vColor");
+    // -- Color
+    // shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "vColor");
+    // gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
+    // -- Texture
+    shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "vTex");
     gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
     
     // Get the uniforms from the shader
     shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
     shaderProgram.vMatrixUniform = gl.getUniformLocation(shaderProgram, "uVMatrix");
     shaderProgram.mMatrixUniform = gl.getUniformLocation(shaderProgram, "uMMatrix");    
+    shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
 
     // Defining Projection Matrix
     mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 10000.0, pMatrix);
@@ -205,8 +254,17 @@ function Draw()
         gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
         
         // Send color data into shader
+        // gl.bindBuffer(gl.ARRAY_BUFFER, mesh.colorBuffer);
+        // gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
+    
+        // Send texCoord data into shader
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.colorBuffer);
-        gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 2, gl.FLOAT, false, 0, 0);
+    
+        // Bind the texture
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, mesh.tex);
+        gl.uniform1i(shaderProgram.samplerUniform, 0);
     
         // Send index data into shader
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
@@ -356,6 +414,26 @@ function SetupBuffers()
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(mesh.indices), gl.STATIC_DRAW);
     
+    // Add a texture to it
+    SetupTexture("scripts/cubeTex.png", mesh);
+    
     // Add this mesh to the list of objects to draw
     drawList.push(mesh);
+}
+
+function SetupTexture(file, mesh)
+{
+    mesh.tex = gl.createTexture();
+    mesh.tex.image = new Image();
+    mesh.tex.image.onload = function()
+    {
+        gl.bindTexture(gl.TEXTURE_2D, mesh.tex);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, mesh.tex.image);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    }
+    
+    mesh.tex.image.src = file;
 }
