@@ -14,12 +14,16 @@ function Mesh()
     this.colors = [];
     
     // Buffer IDs
-    this.vertexBuffer = -1;
-    this.indexBuffer = -1;
-    this.colorBuffer = -1;
+    this.vertexBuffer = 0;
+    this.indexBuffer = 0;
+    this.colorBuffer = 0;
+    
+    // Function Definitions
+    this.CreateCube = MeshCreateCube;
 }
 
-Mesh.prototype.CreateCube = function()
+//Mesh.prototype.CreateCube = function()
+function MeshCreateCube()
 {
     // Vertices
     
@@ -145,13 +149,14 @@ function Animate()
     var timeNow = new Date().getTime();
     var elapsed = timeNow - lastTime;       // DeltaTime
     // Set the current time to lastTime for the next frame
-    lastTime = timeNow; 
+    lastTime = timeNow;
+    // TODO: Rotate the cube
 }
 
 function Draw()
 {
     // Set the background color
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.clearColor(0.137, 0.49, 0.45, 1.0);
     // Enable depth testing
     gl.enable(gl.DEPTH_TEST);
     // Set the size and position of the rendering context
@@ -219,12 +224,10 @@ function Setup()
     var canvas = document.getElementById("glCanvas");
 
     // Initialize the GL context
-    //gl = getWebGLContext(canvas);
-    
     if (!canvas.getContext("webgl") && !canvas.getContext("experimental-webgl"))
-        {
-            return;
-        }
+    {
+        return;
+    }
     
     // Only continue if WebGL is available and working
     gl = (canvas.getContext("webgl")) ? canvas.getContext("webgl") : canvas.getContext("experimental-webgl");
@@ -332,17 +335,21 @@ function SetupBuffers()
     var mesh = new Mesh();
     mesh.CreateCube();
     
+    // Create the Vertex Buffer and fill it up
     mesh.vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.vertices), gl.STATIC_DRAW);
     
+    // Create the Color Buffer and fill it up
     mesh.colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, mesh.colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.colors), gl.STATIC_DRAW); 
     
+    // Create the Index Buffer and fill it up
     mesh.indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(mesh.indices), gl.STATIC_DRAW);
     
+    // Add this mesh to the list of objects to draw
     drawList.push(mesh);
 }
