@@ -156,7 +156,7 @@ function Animate()
 function Draw()
 {
     // Set the background color
-    gl.clearColor(0.137, 0.49, 0.45, 1.0);
+    gl.clearColor(0.137, 0.49, 0.45, 1.0);  
     // Enable depth testing
     gl.enable(gl.DEPTH_TEST);
     // Set the size and position of the rendering context
@@ -177,7 +177,7 @@ function Draw()
     // Get the uniforms from the shader
     shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
     shaderProgram.vMatrixUniform = gl.getUniformLocation(shaderProgram, "uVMatrix");
-    shaderProgram.mMatrixUniform = gl.getUniformLocation(shaderProgram, "uMMatrix");
+    shaderProgram.mMatrixUniform = gl.getUniformLocation(shaderProgram, "uMMatrix");    
 
     // Defining Projection Matrix
     mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 10000.0, pMatrix);
@@ -208,7 +208,7 @@ function Draw()
         // Set the matrix uniforms for MVP
         gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
         gl.uniformMatrix4fv(shaderProgram.vMatrixUniform, false, vMatrix);
-        gl.uniformMatrix4fv(shaderProgram.MMatrixUniform, false, mMatrix);
+        gl.uniformMatrix4fv(shaderProgram.mMatrixUniform, false, mMatrix);
         
         // Draw the objects
         gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
