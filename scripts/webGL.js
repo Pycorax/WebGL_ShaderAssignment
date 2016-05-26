@@ -471,7 +471,7 @@ function SetupBuffers()
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.normals), gl.STATIC_DRAW);
     
     // Add a texture to it
-    SetupTexture("scripts/cubeTex.png", mesh);
+    SetupTexture("images/cubeTex.png", mesh);
     
     // Add this mesh to the list of objects to draw
     drawList.push(mesh);
@@ -481,6 +481,7 @@ function SetupTexture(file, mesh)
 {
     mesh.tex = gl.createTexture();
     mesh.tex.image = new Image();
+    mesh.tex.crossOrigin = '';
     mesh.tex.image.onload = function()
     {
         gl.bindTexture(gl.TEXTURE_2D, mesh.tex);
