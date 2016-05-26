@@ -29,9 +29,9 @@
             
             void main(void)
             {
-                gl_Position = uPMatrix * uVMatrix * UMMatrix * vec4(vPos, 1.0);
+                gl_Position = uPMatrix * uVMatrix * uMMatrix * vec4(vPos, 1.0);
                 
-                color = VColor;
+                color = vColor;
             }
        </script>
     </head>                                             

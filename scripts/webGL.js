@@ -64,7 +64,7 @@ Mesh.prototype.CreateCube = function()
     
     var tempColors = 
     [
-        [1.0, 1.0, 1.0, 1.0],       // Front Face: White
+        [1.0, 0.68, 1.0, 1.0],       // Front Face: Orange
         [1.0, 0.0, 0.0, 1.0],       // Back Face: Red
         [0.0, 1.0, 0.0, 1.0],       // Top Face: Green
         [0.0, 0.0, 1.0, 1.0],       // Bottom Face: Blue
@@ -145,9 +145,7 @@ function Animate()
     var timeNow = new Date().getTime();
     var elapsed = timeNow - lastTime;       // DeltaTime
     // Set the current time to lastTime for the next frame
-    lastTime = timeNow;
-    
-    
+    lastTime = timeNow; 
 }
 
 function Draw()
@@ -202,7 +200,7 @@ function Draw()
         // Send index data into shader
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
         
-        // Set the matrix uniforms
+        // Set the matrix uniforms for MVP
         gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
         gl.uniformMatrix4fv(shaderProgram.vMatrixUniform, false, vMatrix);
         gl.uniformMatrix4fv(shaderProgram.MMatrixUniform, false, mMatrix);
@@ -239,6 +237,7 @@ function Setup()
     // Load VBO, IBO, Color Buffers
     SetupBuffers();
 
+    // Render
     Tick();
 }
     
@@ -299,6 +298,8 @@ function GetShader(shaderID)
           
           return null;
     }
+    
+    return shader;
 }
     
 function GetShaderProgram(vert, frag)
@@ -342,4 +343,6 @@ function SetupBuffers()
     mesh.indexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(mesh.indices), gl.STATIC_DRAW);
+    
+    drawList.push(mesh);
 }
