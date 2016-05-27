@@ -11,19 +11,26 @@
         <script src="scripts/webGL.js" type = "text/javascript"></script>
         <!-- Shaders -->
         <script id ="FragmentShader" type = "x-shader/x-fragment">
+            // Specify the precision of floats
             precision mediump float;
             
+            // Light struct
+            struct Light
+            {
+                vec3 position;
+                vec3 direction;
+                float kAmbient;
+                float kDiffuse;
+                float kSpecular;
+                float kConstant;
+                float kLinear;
+                float kQuadratic;
+                float spotInnerAngle;
+                float spotOuterAngle;
+            };
+            
             // Lights
-            uniform vec3 lightPos;
-            uniform vec3 lightDir;
-            uniform float kAmbient;
-            uniform float kDiffuse;
-            uniform float kSpecular;
-            uniform float kConstant;
-            uniform float kLinear;
-            uniform float kQuadratic;
-            uniform float spotInnerAngle;
-            uniform float spotOuterAngle;
+            uniform Light light;
             
             // Material
             uniform vec3 diffuseColor;
@@ -42,10 +49,10 @@
             {
                 vec3 L, N;
                 N = normalize(normal);
-                L = normalize(lightPos - worldPos);
+                L = normalize(light.position - worldPos);
                 
                 float ndl = dot(N, L);
-                float dist = distance(lightPos, worldPos);
+                float dist = distance(light.position, worldPos);
                 
                 vec4 diffuse = vec4(diffuseColor, 1.0) * max(ndl, 0.0);
                 vec4 texColor = texture2D(uSampler, vec2(texCoord.s, texCoord.t));
