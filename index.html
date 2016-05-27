@@ -30,6 +30,14 @@
                 float spotOuterAngle;
             };
             
+            // Light Types
+            const int LIGHT_POINT = 0;
+            const int LIGHT_DIRECTIONAL = 1;
+            const int LIGHT_SPOT = 2;
+            
+            // Camera Info
+            uniform vec3 viewDirection;
+            
             // Lights
             const int MAX_LIGHTS = 8;
             uniform Light light[MAX_LIGHTS];
@@ -40,26 +48,87 @@
             uniform vec3 specularColor;
             uniform float shininess;
             
-            //varying vec4 color;
+            // Fragment Details
             varying vec2 texCoord;
             varying vec3 normal;
             varying vec3 worldPos;
             
+            // Texture
             uniform sampler2D uSampler;
             
             void main(void)
             {
-                vec3 L, N;
-                N = normalize(normal);
-                L = normalize(light[0].position - worldPos);
+                // Store the final colour here
+                vec4 finalColor = vec4(0.0);
+
+                // Calculate the light direction
+                vec3 lightDir;
+                if (light[0].type == LIGHT_DIRECTIONAL)
+                {
+                    lightDir = normalize(light[0].direction);
+                }
+                else
+                {
+                    lightDir = normalize(light[0].position - worldPos);
+                }
+
+                // Calculate the reflection vector
+                vec3 reflectDir = normalize((viewDirection.xyz + lightDir) * 0.5);
+
+                // Calculate the Ambient
+                vec4 ambient = vec4(light[0].kAmbient * ambientColor, 1.0);
                 
-                float ndl = dot(N, L);
-                float dist = distance(light[0].position, worldPos);
+                // Calculate the Diffuse and Specular
+                vec4 diffuse = vec4(light[0].kDiffuse * diffuseColor * max(dot(normal, lightDir), 0), 1.0);
+                vec4 specular = vec4(light[0].kSpecular * specularColor * pow(max(dot(normal, reflectDir), 0), shininess, 1.0);
+                finalColor = diffuse + specular;
+
+                // Add all the values together
+                gl_FragColor = calcAttenuation(lightDir) * vec4(ambient + (finalColor * texture2D(Texture0, texCoord)));
+            }
+            
+            float calcAttenuation(Light _light, vec3 dirToThisVertex)
+            {
+                float attenuation = 0.0;
                 
-                vec4 diffuse = vec4(diffuseColor, 1.0) * max(ndl, 0.0);
-                vec4 texColor = texture2D(uSampler, vec2(texCoord.s, texCoord.t));
-                
-                gl_FragColor = vec4(texColor.rgb * diffuse.rgb, texColor.a);
+                switch (_light.type)
+                {
+                    case LIGHT_POINT:
+                        {
+                            float dist = distance(_light.position, worldPos);
+                            attenuation = 1 / (_light.kConstant + _light.kLinear * dist + _light.kQuadratic * dist * dist);
+                        }
+                        break;
+                        
+                    case LIGHT_DIRECTIONAL:
+                        {
+                            attenuation = 1.0;
+                        }
+                        break;
+                        
+                    case LIGHT_SPOT:
+                        {
+                            float cosAngle = dot(_light.direction, dirToThisVertex);
+                            float cosInner = cos(radians(_light.spotInnerAngle));
+                            float cosOuter = cos(radians(_light.spotOuterAngle));
+                            
+                            if (cosInner > cosAngle && cosAngle > cosOuter)
+                            {
+                                attenuation = (cosAngle - cosOuter) / (cosInner - cosOuter);
+                            }
+                            else if (cosAngle >= cosInner)
+                            {
+                                attenuation = 1.0;
+                            }
+                            else
+                            {
+                                attenuation = 0.0;
+                            }
+                        }
+                        break;
+                }
+            
+                return attenuation;
             }
        </script>
        

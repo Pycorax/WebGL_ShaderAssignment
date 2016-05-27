@@ -7,6 +7,7 @@ var gl;                             // A global variable for the WebGL context
 var drawList = [];                  // Stores the list of objects we are drawing
 var lightList = [];                 // Stores the list of lights in the scene
 var cameraPos = vec3.create();      // Stores the position of the camera
+var cameraView = vec3.create();     // Stores the direction the camera is looking at
 // MVP
 var vMatrix = mat4.create();        // View Matrix
 var pMatrix = mat4.create();        // Projection Matrix
@@ -94,6 +95,8 @@ function Draw()
     shaderProgram.vMatrixUniform = gl.getUniformLocation(shaderProgram, "uVMatrix");
     shaderProgram.mMatrixUniform = gl.getUniformLocation(shaderProgram, "uMMatrix");    
     shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
+    // -- Camera
+    shaderProgram.cameraView = gl.getUniformLocation(shaderProgram, "viewDirection");
     // -- Lights
     shaderProgram.lightType = gl.getUniformLocation(shaderProgram, "light[0].type");
     shaderProgram.lightPos = gl.getUniformLocation(shaderProgram, "light[0].position");
@@ -118,6 +121,9 @@ function Draw()
     // Defining the View Matrix
     mat4.identity(vMatrix);
     mat4.translate(vMatrix, cameraPos);      // Camera Position
+    
+    // Define the Camera View
+    gl.uniform3f(shaderProgram.cameraView, cameraView[0], cameraView[1], cameraView[2]);
     
     // Define the light values
     gl.uniform1i(shaderProgram.lightType, lightList[0].type);
@@ -210,6 +216,7 @@ function Setup()
 
     // Set the Camera Position
     cameraPos = [0.0, 0.0, -5.0];
+    cameraView = [0.0, 0.0, 1.0];
     
     // Render
     Tick();
