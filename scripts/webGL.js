@@ -4,8 +4,9 @@
 var timeSinceStart = 0.0;           // The time since the simulations tarted
 var lastTime = 0;                   // The previous frame's time
 var gl;                             // A global variable for the WebGL context
-var drawList = [];                  // Store the list of objects we are drawing
+var drawList = [];                  // Stores the list of objects we are drawing
 var lightList = [];                 // Stores the list of lights in the scene
+var cameraPos = vec3.create();      // Stores the position of the camera
 // MVP
 var vMatrix = mat4.create();        // View Matrix
 var pMatrix = mat4.create();        // Projection Matrix
@@ -62,7 +63,7 @@ function Animate()
 function Draw()
 {
     // Set the background color
-    gl.clearColor(0.13, 0.16, 0.20, 1.0);  
+    gl.clearColor(0.13, 0.16, 0.20, 1.0);
     // Enable depth testing
     gl.enable(gl.DEPTH_TEST);
     // Set the size and position of the rendering context
@@ -100,7 +101,7 @@ function Draw()
 
     // Defining the View Matrix
     mat4.identity(vMatrix);
-    mat4.translate(vMatrix, [0.0, 0.0, -5.0]);      // Camera Position
+    mat4.translate(vMatrix, cameraPos);      // Camera Position
     
     // Define the lightPos
     gl.uniform3f(shaderProgram.lightPos, lightList[0].position[0], lightList[0].position[1], lightList[0].position[2]);
@@ -178,6 +179,9 @@ function Setup()
     // Load VBO, IBO, Color Buffers
     SetupBuffers();
 
+    // Set the Camera Position
+    cameraPos = [0.0, 0.0, -5.0];
+    
     // Render
     Tick();
 }
