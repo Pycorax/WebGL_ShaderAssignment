@@ -22,6 +22,9 @@ function Mesh()
     this.colorBuffer = 0;
     this.normalBuffer = 0;
     
+    // Transforms
+    this.transform = mat4.create();
+    
     // Function Definitions
     this.CreateCube = MeshCreateCube;
 }
@@ -242,8 +245,8 @@ function Animate()
     // Update the time since start
     timeSinceStart += elapsed;
     // Rotate the cube
-    mat4.identity(mMatrix);
-    mat4.rotate(mMatrix, timeSinceStart * 0.001, [-1.0, 1.0, -1.0]);
+    mat4.identity(drawList[0].transform);
+    mat4.rotate(drawList[0].transform, timeSinceStart * 0.001, [-1.0, 1.0, -1.0]);
 }
 
 function Draw()
@@ -295,6 +298,9 @@ function Draw()
     for (var i = 0; i < drawList.length; ++i)
     {
         var mesh = drawList[i];
+        
+        // Set the model transform matrix to be this object's transform
+        mMatrix = mesh.transform
         
         // Send vertex data into shader
         gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
