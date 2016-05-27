@@ -4,6 +4,7 @@
 function Light()
 {
     // Basics
+    this.type = Light.TYPE_POINT;
     this.position = vec3.create();
     this.direction = vec3.create();
     
@@ -21,3 +22,7 @@ function Light()
     this.spotInnerAngle = 30.0;
     this.spotOuterAngle = 120.0;
 }
+
+Light.TYPE_POINT = 0;
+Light.TYPE_DIRECTIONAL = 1;
+Light.TYPE_SPOT = 2;

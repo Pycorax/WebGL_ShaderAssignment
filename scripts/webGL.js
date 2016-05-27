@@ -89,11 +89,23 @@ function Draw()
     gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
     
     // Get the uniforms from the shader
+    // -- MVP
     shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
     shaderProgram.vMatrixUniform = gl.getUniformLocation(shaderProgram, "uVMatrix");
     shaderProgram.mMatrixUniform = gl.getUniformLocation(shaderProgram, "uMMatrix");    
     shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
+    // -- Lights
     shaderProgram.lightPos = gl.getUniformLocation(shaderProgram, "lightPos");
+    shaderProgram.lightDir = gl.getUniformLocation(shaderProgram, "lightDir");
+    shaderProgram.kAmbient = gl.getUniformLocation(shaderProgram, "kAmbient");
+    shaderProgram.kDiffuse = gl.getUniformLocation(shaderProgram, "kDiffuse");
+    shaderProgram.kSpecular = gl.getUniformLocation(shaderProgram, "kSpecular");
+    shaderProgram.kConstant = gl.getUniformLocation(shaderProgram, "kConstant");
+    shaderProgram.kLinear = gl.getUniformLocation(shaderProgram, "kLinear");
+    shaderProgram.kQuadratic = gl.getUniformLocation(shaderProgram, "kQuadratic");
+    shaderProgram.spotInnerAngle = gl.getUniformLocation(shaderProgram, "spotInnerAngle");
+    shaderProgram.spotOuterAngle = gl.getUniformLocation(shaderProgram, "spotOuterAngle");
+    // -- Material
     shaderProgram.diffuseColor = gl.getUniformLocation(shaderProgram, "diffuseColor");
     shaderProgram.ambientColor = gl.getUniformLocation(shaderProgram, "ambientColor");
     shaderProgram.specularColor = gl.getUniformLocation(shaderProgram, "specularColor");
@@ -106,8 +118,17 @@ function Draw()
     mat4.identity(vMatrix);
     mat4.translate(vMatrix, cameraPos);      // Camera Position
     
-    // Define the lightPos
+    // Define the light values
     gl.uniform3f(shaderProgram.lightPos, lightList[0].position[0], lightList[0].position[1], lightList[0].position[2]);
+    gl.uniform3f(shaderProgram.lightDir, lightList[0].direction[0], lightList[0].direction[1], lightList[0].direction[2]);
+    gl.uniform1f(shaderProgram.kAmbient, lightList[0].kAmbient);
+    gl.uniform1f(shaderProgram.kDiffuse, lightList[0].kDiffuse);
+    gl.uniform1f(shaderProgram.kSpecular, lightList[0].kSpecular);
+    gl.uniform1f(shaderProgram.kConstant, lightList[0].kConstant);
+    gl.uniform1f(shaderProgram.kLinear, lightList[0].kLinear);
+    gl.uniform1f(shaderProgram.kQuadratic, lightList[0].kQuadratic);
+    gl.uniform1f(shaderProgram.spotInnerAngle, lightList[0].spotInnerAngle);
+    gl.uniform1f(shaderProgram.spotOuterAngle, lightList[0].spotOuterAngle); 
     
     // Drawing Objects
     for (var i = 0; i < drawList.length; ++i)

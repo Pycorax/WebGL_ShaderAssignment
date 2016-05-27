@@ -13,9 +13,19 @@
         <script id ="FragmentShader" type = "x-shader/x-fragment">
             precision mediump float;
             
+            // Lights
             uniform vec3 lightPos;
+            uniform vec3 lightDir;
+            uniform float kAmbient;
+            uniform float kDiffuse;
+            uniform float kSpecular;
+            uniform float kConstant;
+            uniform float kLinear;
+            uniform float kQuadratic;
+            uniform float spotInnerAngle;
+            uniform float spotOuterAngle;
             
-            // Lighting
+            // Material
             uniform vec3 diffuseColor;
             uniform vec3 ambientColor;
             uniform vec3 specularColor;
