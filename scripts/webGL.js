@@ -95,17 +95,17 @@ function Draw()
     shaderProgram.mMatrixUniform = gl.getUniformLocation(shaderProgram, "uMMatrix");    
     shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
     // -- Lights
-    shaderProgram.lightType = gl.getUniformLocation(shaderProgram, "light.type");
-    shaderProgram.lightPos = gl.getUniformLocation(shaderProgram, "light.position");
-    shaderProgram.lightDir = gl.getUniformLocation(shaderProgram, "light.direction");
-    shaderProgram.kAmbient = gl.getUniformLocation(shaderProgram, "light.kAmbient");
-    shaderProgram.kDiffuse = gl.getUniformLocation(shaderProgram, "light.kDiffuse");
-    shaderProgram.kSpecular = gl.getUniformLocation(shaderProgram, "light.kSpecular");
-    shaderProgram.kConstant = gl.getUniformLocation(shaderProgram, "light.kConstant");
-    shaderProgram.kLinear = gl.getUniformLocation(shaderProgram, "light.kLinear");
-    shaderProgram.kQuadratic = gl.getUniformLocation(shaderProgram, "light.kQuadratic");
-    shaderProgram.spotInnerAngle = gl.getUniformLocation(shaderProgram, "light.spotInnerAngle");
-    shaderProgram.spotOuterAngle = gl.getUniformLocation(shaderProgram, "light.spotOuterAngle");
+    shaderProgram.lightType = gl.getUniformLocation(shaderProgram, "light[0].type");
+    shaderProgram.lightPos = gl.getUniformLocation(shaderProgram, "light[0].position");
+    shaderProgram.lightDir = gl.getUniformLocation(shaderProgram, "light[0].direction");
+    shaderProgram.kAmbient = gl.getUniformLocation(shaderProgram, "light[0].kAmbient");
+    shaderProgram.kDiffuse = gl.getUniformLocation(shaderProgram, "light[0].kDiffuse");
+    shaderProgram.kSpecular = gl.getUniformLocation(shaderProgram, "light[0].kSpecular");
+    shaderProgram.kConstant = gl.getUniformLocation(shaderProgram, "light[0].kConstant");
+    shaderProgram.kLinear = gl.getUniformLocation(shaderProgram, "light[0].kLinear");
+    shaderProgram.kQuadratic = gl.getUniformLocation(shaderProgram, "light[0].kQuadratic");
+    shaderProgram.spotInnerAngle = gl.getUniformLocation(shaderProgram, "light[0].spotInnerAngle");
+    shaderProgram.spotOuterAngle = gl.getUniformLocation(shaderProgram, "light[0].spotOuterAngle");
     // -- Material
     shaderProgram.diffuseColor = gl.getUniformLocation(shaderProgram, "diffuseColor");
     shaderProgram.ambientColor = gl.getUniformLocation(shaderProgram, "ambientColor");

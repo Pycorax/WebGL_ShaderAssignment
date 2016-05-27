@@ -31,7 +31,8 @@
             };
             
             // Lights
-            uniform Light light;
+            const int MAX_LIGHTS = 8;
+            uniform Light light[MAX_LIGHTS];
             
             // Material
             uniform vec3 diffuseColor;
@@ -50,10 +51,10 @@
             {
                 vec3 L, N;
                 N = normalize(normal);
-                L = normalize(light.position - worldPos);
+                L = normalize(light[0].position - worldPos);
                 
                 float ndl = dot(N, L);
-                float dist = distance(light.position, worldPos);
+                float dist = distance(light[0].position, worldPos);
                 
                 vec4 diffuse = vec4(diffuseColor, 1.0) * max(ndl, 0.0);
                 vec4 texColor = texture2D(uSampler, vec2(texCoord.s, texCoord.t));
