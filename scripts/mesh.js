@@ -22,8 +22,11 @@ function Mesh()
     // Transforms
     this.transform = mat4.create();
     
+    // Material
+    this.material = new Material();
+    
     // Function Definitions
-    this.CreateCube = CreateCubeFunction();
+    this.CreateCube = CreateCubeFunction;
 }
 
 function CreateCubeFunction()

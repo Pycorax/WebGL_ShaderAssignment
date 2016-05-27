@@ -92,6 +92,7 @@ function Draw()
     shaderProgram.mMatrixUniform = gl.getUniformLocation(shaderProgram, "uMMatrix");    
     shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
     shaderProgram.lightPos = gl.getUniformLocation(shaderProgram, "lightPos");
+    shaderProgram.diffuseColor = gl.getUniformLocation(shaderProgram, "diffuseColor");
 
     // Defining Projection Matrix
     mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 10000.0, pMatrix);
@@ -139,6 +140,9 @@ function Draw()
         gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
         gl.uniformMatrix4fv(shaderProgram.vMatrixUniform, false, vMatrix);
         gl.uniformMatrix4fv(shaderProgram.mMatrixUniform, false, mMatrix);
+        
+        // Set the lighting Material uniforms
+        gl.uniform3f(shaderProgram.diffuseColor, mesh.material.diffuse[0], mesh.material.diffuse[1], mesh.material.diffuse[2]);
         
         // Draw the objects
         gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
@@ -287,6 +291,9 @@ function SetupBuffers()
     
     // Add a texture to it
     SetupTexture("images/cubeTex.png", mesh);
+    
+    // Set the material
+    mesh.material.diffuse = [1.0, 1.0, 1.0];
     
     // Add this mesh to the list of objects to draw
     drawList.push(mesh);
