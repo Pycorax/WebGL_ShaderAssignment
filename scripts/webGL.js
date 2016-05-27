@@ -95,6 +95,7 @@ function Draw()
     shaderProgram.mMatrixUniform = gl.getUniformLocation(shaderProgram, "uMMatrix");    
     shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
     // -- Lights
+    shaderProgram.lightType = gl.getUniformLocation(shaderProgram, "light.type");
     shaderProgram.lightPos = gl.getUniformLocation(shaderProgram, "light.position");
     shaderProgram.lightDir = gl.getUniformLocation(shaderProgram, "light.direction");
     shaderProgram.kAmbient = gl.getUniformLocation(shaderProgram, "light.kAmbient");
@@ -119,6 +120,7 @@ function Draw()
     mat4.translate(vMatrix, cameraPos);      // Camera Position
     
     // Define the light values
+    gl.uniform1i(shaderProgram.lightType, lightList[0].type);
     gl.uniform3f(shaderProgram.lightPos, lightList[0].position[0], lightList[0].position[1], lightList[0].position[2]);
     gl.uniform3f(shaderProgram.lightDir, lightList[0].direction[0], lightList[0].direction[1], lightList[0].direction[2]);
     gl.uniform1f(shaderProgram.kAmbient, lightList[0].kAmbient);
