@@ -95,6 +95,9 @@ function Draw()
     shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
     shaderProgram.lightPos = gl.getUniformLocation(shaderProgram, "lightPos");
     shaderProgram.diffuseColor = gl.getUniformLocation(shaderProgram, "diffuseColor");
+    shaderProgram.ambientColor = gl.getUniformLocation(shaderProgram, "ambientColor");
+    shaderProgram.specularColor = gl.getUniformLocation(shaderProgram, "specularColor");
+    shaderProgram.shininess = gl.getUniformLocation(shaderProgram, "shininess");
 
     // Defining Projection Matrix
     mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 10000.0, pMatrix);
@@ -145,6 +148,9 @@ function Draw()
         
         // Set the lighting Material uniforms
         gl.uniform3f(shaderProgram.diffuseColor, mesh.material.diffuse[0], mesh.material.diffuse[1], mesh.material.diffuse[2]);
+        gl.uniform3f(shaderProgram.ambientColor, mesh.material.ambient[0], mesh.material.ambient[1], mesh.material.ambient[2]);
+        gl.uniform3f(shaderProgram.specularColor, mesh.material.specular[0], mesh.material.specular[1], mesh.material.specular[2]);
+        gl.uniform1f(shaderProgram.shininess, mesh.material.shininess);
         
         // Draw the objects
         gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
