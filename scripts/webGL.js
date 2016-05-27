@@ -5,6 +5,7 @@ var timeSinceStart = 0.0;           // The time since the simulations tarted
 var lastTime = 0;                   // The previous frame's time
 var gl;                             // A global variable for the WebGL context
 var drawList = [];                  // Store the list of objects we are drawing
+var lightList = [];                 // Stores the list of lights in the scene
 // MVP
 var vMatrix = mat4.create();        // View Matrix
 var pMatrix = mat4.create();        // Projection Matrix
@@ -102,7 +103,7 @@ function Draw()
     mat4.translate(vMatrix, [0.0, 0.0, -5.0]);      // Camera Position
     
     // Define the lightPos
-    gl.uniform3f(shaderProgram.lightPos, 0, 10, -5);
+    gl.uniform3f(shaderProgram.lightPos, lightList[0].position[0], lightList[0].position[1], lightList[0].position[2]);
     
     // Drawing Objects
     for (var i = 0; i < drawList.length; ++i)
@@ -170,6 +171,9 @@ function Setup()
 
     // Load Shaders
     shaderProgram = GetShaderProgram("VertexShader", "FragmentShader");
+    
+    // Initialize Lights
+    SetupLights();
     
     // Load VBO, IBO, Color Buffers
     SetupBuffers();
@@ -262,6 +266,18 @@ function GetShaderProgram(vert, frag)
     }
     
     return program;
+}
+
+function SetupLights()
+{
+    // Define a light
+    var light = new Light();
+    
+    // Set it's params
+    light.position = [0, 10, -5];
+    
+    // Add it to the light list
+    lightList.push(light);
 }
 
 function SetupBuffers()
