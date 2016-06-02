@@ -8,7 +8,7 @@ const LIGHT_TYPE_SPOT = 2;
 function Light()
 {
     // Basics
-	this.enabled = false;
+	this.power = 0.0;
     this.type = LIGHT_TYPE_POINT;
     this.position = vec3.create();
     this.direction = vec3.create();

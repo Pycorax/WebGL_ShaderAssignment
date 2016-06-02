@@ -64,7 +64,7 @@ function Animate()
     // Rotate the cube
     mat4.identity(drawList[0].transform);
 	//mat4.rotate(drawList[0].transform, timeSinceStart * 0.001, [-1.0, 1.0, -1.0]);
-	//mat4.rotate(drawList[0].transform, timeSinceStart * 0.001, [1.0, 0.0, 0.0]);
+	mat4.rotate(drawList[0].transform, timeSinceStart * 0.001, [0.0, 1.0, 0.0]);
 }
 
 function Draw()
@@ -114,7 +114,7 @@ function Draw()
     for (var i = 0; i < MAX_LIGHTS && i < lightList.length; ++i)
     {
         // -- Get Uniforms
-		shaderProgram.lightEnabled = gl.getUniformLocation(shaderProgram, "light[" + i + "].enabled");
+		shaderProgram.lightPower = gl.getUniformLocation(shaderProgram, "light[" + i + "].power");
         shaderProgram.lightType = gl.getUniformLocation(shaderProgram, "light[" + i + "].type");
         shaderProgram.lightPos = gl.getUniformLocation(shaderProgram, "light[" + i + "].position");
         shaderProgram.lightDir = gl.getUniformLocation(shaderProgram, "light[" + i + "].direction");
@@ -127,7 +127,7 @@ function Draw()
         shaderProgram.spotInnerAngle = gl.getUniformLocation(shaderProgram, "light[" + i + "].spotInnerAngle");
         shaderProgram.spotOuterAngle = gl.getUniformLocation(shaderProgram, "light[" + i + "].spotOuterAngle");
         // -- Define the values
-		gl.uniform1i(shaderProgram.enabled, lightList[i].enabled);
+		gl.uniform1f(shaderProgram.lightPower, lightList[i].power);
         gl.uniform1i(shaderProgram.lightType, lightList[i].type);
         gl.uniform3f(shaderProgram.lightPos, lightList[i].position[0], lightList[i].position[1], lightList[i].position[2]);
         gl.uniform3f(shaderProgram.lightDir, lightList[i].direction[0], lightList[i].direction[1], lightList[i].direction[2]);
@@ -330,22 +330,18 @@ function SetupLights()
 	}
 
     // Set it's params
-    lightList[0].position = [0, 0, 1.1];
+	lightList[0].power = 1.0;
+    lightList[0].position = [0, 0, 2];
 	lightList[0].type = LIGHT_TYPE_SPOT;
 	lightList[0].direction = [0, 0, 1];
-	// lightList[1].position = [0, 10, 5];
-    // lightList[2].position = [-5, 10, 0];
-	// lightList[3].position = [5, 10, 0];
-    // lightList[4].position = [0, -10, -5];
-	// lightList[4].type = Light.DIRECTIONAL;
-	// lightList[4].direction = [0, -1, 0];
-	// lightList[5].position = [0, 0, 5];
-	// lightList[5].type = Light.SPOT;
-	// lightList[4].direction = [0, 0, -1];
-    // lightList[6].position = [0, 0, -5];
-	// lightList[6].type = Light.SPOT;
-	// lightList[4].direction = [0, 0, 5];
-	// lightList[7].position = [5, -10, 0];
+	lightList[1].power = 1.0;
+	lightList[1].position = [0, 10, 5];
+    lightList[1].direction = [0, 0, 1];
+	lightList[1].type = LIGHT_TYPE_DIRECTIONAL;
+	lightList[2].power = 1.0;
+	lightList[2].position = [0, 0, 0];
+    lightList[2].direction = [0, 0, -1];
+	lightList[2].type = LIGHT_TYPE_DIRECTIONAL;
 }
 
 function SetupBuffers()
