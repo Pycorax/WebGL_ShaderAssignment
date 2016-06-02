@@ -1,7 +1,7 @@
 <!doctype>
 
 <html>
-    <head> 
+    <head>
         <meta charset="utf-8" />
         <!-- Script Includes -->
         <script src="scripts/glMatrix-0.9.5.min.js" type = "text/javascript"></script>
@@ -13,10 +13,11 @@
         <script id ="FragmentShader" type = "x-shader/x-fragment">
             // Specify the precision of floats
             precision mediump float;
-            
+
             // Light struct
             struct Light
             {
+				bool enabled;
                 int type;
                 vec3 position;
                 vec3 direction;
@@ -29,71 +30,81 @@
                 float spotInnerAngle;
                 float spotOuterAngle;
             };
-            
+
             // Light Types
             const int LIGHT_POINT = 0;
             const int LIGHT_DIRECTIONAL = 1;
             const int LIGHT_SPOT = 2;
-            
+
             // Camera Info
             uniform vec3 viewDirection;
-            
+
             // Lights
             const int MAX_LIGHTS = 8;
             uniform Light light[MAX_LIGHTS];
-            
+
             // Material
             uniform vec3 diffuseColor;
             uniform vec3 ambientColor;
             uniform vec3 specularColor;
             uniform float shininess;
-            
+
             // Fragment Details
             varying vec2 texCoord;
             varying vec3 normal;
             varying vec3 worldPos;
-            
+
             // Texture
             uniform sampler2D uSampler;
-            
+
             // Function Prototypes
             float calcAttenuation(Light _light, vec3 dirToThisVertex);
-            
+
             void main(void)
             {
+				// Set initial value of the fragColour
+				gl_FragColor = vec4(0.0);
+
                 // Store the final colour here
                 vec4 finalColor = vec4(0.0);
 
-                // Calculate the light direction
-                vec3 lightDir;
-                if (light[0].type == LIGHT_DIRECTIONAL)
-                {
-                    lightDir = normalize(light[0].direction);
-                }
-                else
-                {
-                    lightDir = normalize(light[0].position - worldPos);
-                }
+				// Loop through all the lights
+				for (int i = 0; i < MAX_LIGHTS; ++i)
+				{
+					// Check if the light is on
+					
 
-                // Calculate the reflection vector
-                vec3 reflectDir = normalize((viewDirection.xyz + lightDir) * 0.5);
+					// Calculate the light direction
+	                vec3 lightDir;
+	                if (light[i].type == LIGHT_DIRECTIONAL)
+	                {
+	                    lightDir = normalize(light[i].direction);
+	                }
+	                else
+	                {
+	                    lightDir = normalize(light[i].position - worldPos);
+	                }
 
-                // Calculate the Ambient
-                vec4 ambient = vec4(light[0].kAmbient * ambientColor, 1.0);
-                
-                // Calculate the Diffuse and Specular
-                vec4 diffuse = vec4(light[0].kDiffuse * diffuseColor * max(dot(normal, lightDir), 0.0), 1.0);
-                vec4 specular = vec4(light[0].kSpecular * specularColor * pow(max(dot(normal, reflectDir), 0.0), shininess), 1.0);
-                finalColor = diffuse + specular;
+	                // Calculate the reflection vector
+	                vec3 reflectDir = normalize((viewDirection.xyz + lightDir) * 0.5);
 
-                // Add all the values together
-                gl_FragColor = calcAttenuation(light[0], lightDir) * vec4(ambient + (finalColor * texture2D(uSampler, texCoord)));
+	                // Calculate the Ambient
+	                vec4 ambient = vec4(light[i].kAmbient * ambientColor, 1.0);
+
+	                // Calculate the Diffuse and Specular
+	                vec4 diffuse = vec4(light[i].kDiffuse * diffuseColor * max(dot(normal, lightDir), 0.0), 1.0);
+	                vec4 specular = vec4(light[i].kSpecular * specularColor * pow(max(dot(normal, reflectDir), 0.0), shininess), 1.0);
+	                finalColor = diffuse + specular;
+
+	                // Add all the values together
+	                gl_FragColor += calcAttenuation(light[i], lightDir) * vec4(ambient + (finalColor * texture2D(uSampler, texCoord)));
+				}
             }
-            
+
             float calcAttenuation(Light _light, vec3 dirToThisVertex)
             {
                 float attenuation = 0.0;
-                
+
                 if (_light.type == LIGHT_POINT)
                 {
                     float dist = distance(_light.position, worldPos);
@@ -108,7 +119,7 @@
                     float cosAngle = dot(_light.direction, dirToThisVertex);
                     float cosInner = cos(radians(_light.spotInnerAngle));
                     float cosOuter = cos(radians(_light.spotOuterAngle));
-                    
+
                     if (cosInner > cosAngle && cosAngle > cosOuter)
                     {
                         attenuation = (cosAngle - cosOuter) / (cosInner - cosOuter);
@@ -122,38 +133,38 @@
                         attenuation = 0.0;
                     }
                 }
-            
+
                 return attenuation;
             }
        </script>
-       
+
        <script id ="VertexShader" type = "x-shader/x-vertex">
             attribute vec3 vPos;
             // attribute vec4 vColor;
             attribute vec3 vNorm;
             attribute vec2 vTex;
-            
+
             uniform mat4 uMMatrix;
             uniform mat4 uVMatrix;
             uniform mat4 uPMatrix;
-            
+
             //varying vec4 color;
             varying vec2 texCoord;
             varying vec3 normal;
             varying vec3 worldPos;
-            
+
             void main(void)
             {
                 gl_Position = uPMatrix * uVMatrix * uMMatrix * vec4(vPos, 1.0);
-                
+
                 //color = vColor;
                 texCoord = vTex;
                 normal = vNorm;
                 worldPos = (uMMatrix * vec4(vPos, 1.0)).xyz;
             }
        </script>
-    </head>                                             
-    
+    </head>
+
     <body onload="Setup()">
         <canvas id="glCanvas" width="600" height="480">
             Your browser doesn't support HTML5 Canvas!
@@ -161,8 +172,7 @@
         <div id = "Log">
             <b>Log:</b>
         </div>
-        
-       
+
+
     </body>
 </html>
-    
