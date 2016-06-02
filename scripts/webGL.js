@@ -8,11 +8,12 @@ const MAX_LIGHTS = 8;
  */
 var timeSinceStart = 0.0;           // The time since the simulations tarted
 var lastTime = 0;                   // The previous frame's time
+var deltaTime = 0.0;				// The time between the previous frame and current frame
 var gl;                             // A global variable for the WebGL context
 var drawList = [];                  // Stores the list of objects we are drawing
 var lightList = [];                 // Stores the list of lights in the scene
-var cameraPos = vec3.create();      // Stores the position of the camera
-var cameraView = vec3.create();     // Stores the direction the camera is looking at
+var camera = new Camera();      	// Stores the camera details
+var keysPressed = [];				// Stores a list of keys pressed
 // MVP
 var vMatrix = mat4.create();        // View Matrix
 var pMatrix = mat4.create();        // Projection Matrix
@@ -48,23 +49,56 @@ window.requestAnimFrame =
 function Tick()
 {
     requestAnimFrame(Tick);
+	TimeUpdate();
     Animate();
+	InputUpdate();
     Draw();
+}
+
+function TimeUpdate()
+{
+	// Get current time
+    var timeNow = new Date().getTime();
+    deltaTime = timeNow - lastTime;       // DeltaTime
+    // Set the current time to lastTime for the next frame
+    lastTime = timeNow;
+    // Update the time since start
+    timeSinceStart += deltaTime;
 }
 
 function Animate()
 {
-    // Get current time
-    var timeNow = new Date().getTime();
-    var elapsed = timeNow - lastTime;       // DeltaTime
-    // Set the current time to lastTime for the next frame
-    lastTime = timeNow;
-    // Update the time since start
-    timeSinceStart += elapsed;
     // Rotate the cube
     mat4.identity(drawList[0].transform);
 	//mat4.rotate(drawList[0].transform, timeSinceStart * 0.001, [-1.0, 1.0, -1.0]);
 	mat4.rotate(drawList[0].transform, timeSinceStart * 0.001, [0.0, 1.0, 0.0]);
+}
+
+function InputUpdate()
+{
+	// Process all the keys
+	for (key in keysPressed)
+	{
+		if (keysPressed[key])
+		{
+			switch(key)
+			{
+				case 'w':
+					camera.MoveForward(deltaTime);
+					break;
+				case 'a':
+					camera.MoveLeft(deltaTime);
+					break;
+				case 's':
+					camera.MoveBackward(deltaTime);
+					break;
+				case 'd':
+					camera.MoveRight(deltaTime);
+					break;
+
+			}
+		}
+	}
 }
 
 function Draw()
@@ -146,10 +180,10 @@ function Draw()
 
     // Defining the View Matrix
     mat4.identity(vMatrix);
-    mat4.translate(vMatrix, cameraPos);      // Camera Position
+    mat4.translate(vMatrix, camera.position);      // Camera Position
 
     // Define the Camera View
-    gl.uniform3f(shaderProgram.cameraView, cameraView[0], cameraView[1], cameraView[2]);
+    gl.uniform3f(shaderProgram.cameraView, camera.target[0], camera.target[1], camera.target[2]);
 
     // Drawing Objects
     for (var i = 0; i < drawList.length; ++i)
@@ -228,8 +262,8 @@ function Setup()
     SetupBuffers();
 
     // Set the Camera Position
-    cameraPos = [0.0, 0.0, -5.0];
-    cameraView = [0.0, 0.0, 1.0];
+    camera.position = [0.0, 0.0, -5.0];
+    camera.target = [0.0, 0.0, 1.0];
 
     // Render
     Tick();
@@ -395,4 +429,14 @@ function SetupTexture(file, mesh)
     }
 
     mesh.tex.image.src = file;
+}
+
+function InputKeyDown(event)
+{
+	keysPressed[event.key] = true;
+}
+
+function InputKeyUp(event)
+{
+	keysPressed[event.key] = false;
 }
