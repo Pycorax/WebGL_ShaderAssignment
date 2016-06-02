@@ -63,7 +63,8 @@ function Animate()
     timeSinceStart += elapsed;
     // Rotate the cube
     mat4.identity(drawList[0].transform);
-    mat4.rotate(drawList[0].transform, timeSinceStart * 0.001, [-1.0, 1.0, -1.0]);
+	//mat4.rotate(drawList[0].transform, timeSinceStart * 0.001, [-1.0, 1.0, -1.0]);
+	//mat4.rotate(drawList[0].transform, timeSinceStart * 0.001, [1.0, 0.0, 0.0]);
 }
 
 function Draw()
@@ -329,14 +330,22 @@ function SetupLights()
 	}
 
     // Set it's params
-    lightList[0].position = [0, 10, -5];
-	lightList[1].position = [0, 10, 5];
-    lightList[2].position = [-5, 10, 0];
-	lightList[3].position = [5, 10, 0];
-    lightList[4].position = [0, -10, -5];
-	lightList[5].position = [0, -10, 15];
-    lightList[6].position = [0, -10, 0];
-	lightList[7].position = [5, -10, 0];
+    lightList[0].position = [0, 0, 1.1];
+	lightList[0].type = LIGHT_TYPE_SPOT;
+	lightList[0].direction = [0, 0, 1];
+	// lightList[1].position = [0, 10, 5];
+    // lightList[2].position = [-5, 10, 0];
+	// lightList[3].position = [5, 10, 0];
+    // lightList[4].position = [0, -10, -5];
+	// lightList[4].type = Light.DIRECTIONAL;
+	// lightList[4].direction = [0, -1, 0];
+	// lightList[5].position = [0, 0, 5];
+	// lightList[5].type = Light.SPOT;
+	// lightList[4].direction = [0, 0, -1];
+    // lightList[6].position = [0, 0, -5];
+	// lightList[6].type = Light.SPOT;
+	// lightList[4].direction = [0, 0, 5];
+	// lightList[7].position = [5, -10, 0];
 }
 
 function SetupBuffers()

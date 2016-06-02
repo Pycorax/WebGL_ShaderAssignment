@@ -1,11 +1,15 @@
 /****************************************/
 /* Light Class                           */
 /****************************************/
+const LIGHT_TYPE_POINT = 0;
+const LIGHT_TYPE_DIRECTIONAL = 1;
+const LIGHT_TYPE_SPOT = 2;
+
 function Light()
 {
     // Basics
 	this.enabled = false;
-    this.type = Light.TYPE_POINT;
+    this.type = LIGHT_TYPE_POINT;
     this.position = vec3.create();
     this.direction = vec3.create();
 
@@ -32,10 +36,6 @@ function Light()
 	this.SetAttenuation = SetAttenuation;
 }
 
-Light.TYPE_POINT = 0;
-Light.TYPE_DIRECTIONAL = 1;
-Light.TYPE_SPOT = 2;
-
 // Function to initialize the light basics
 // -- type : int (0 - 2) (Light.TYPE_POINT, Light.TYPE_DIRECTIONAL, Light.TYPE_SPOT)
 // -- position: vec3
@@ -50,7 +50,7 @@ function Initialize(lightType, position)
 // -- position: vec3
 function InitializePoint(position)
 {
-	Initialize(Light.TYPE_POINT, position);
+	Initialize(LIGHT_TYPE_POINT, position);
 }
 
 // Function to initialize the light as Directional
@@ -58,7 +58,7 @@ function InitializePoint(position)
 // -- direction : vec3
 function InitializeDirectional(position, direction)
 {
-	Initialize(Light.TYPE_DIRECTIONAL, position);
+	Initialize(LIGHT_TYPE_DIRECTIONAL, position);
 	this.direction = direction;
 }
 
@@ -69,7 +69,7 @@ function InitializeDirectional(position, direction)
 // -- outerAngle: float
 function InitializeSpot(position, direction, innerAngle, outerAngle)
 {
-	Initialize(Light.TYPE_SPOT, position);
+	Initialize(LIGHT_TYPE_SPOT, position);
 	this.direction = direction;
 	this.innerAngle = innerAngle;
 	this.outerAngle = outerAngle;
