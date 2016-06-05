@@ -214,7 +214,7 @@ function Draw()
 		// gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
 
 		// Send texCoord data into shader
-		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.colorBuffer);
+		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.texCoordBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 2, gl.FLOAT, false, 0, 0);
 
 		// Bind the texture
