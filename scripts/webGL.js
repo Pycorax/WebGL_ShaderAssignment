@@ -241,7 +241,7 @@ function Draw()
 		gl.uniform1f(shaderProgram.shininess, mesh.material.shininess);
 
 		// Draw the objects
-		gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+		gl.drawElements(gl.TRIANGLES, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
 	}
 }
 
@@ -395,7 +395,8 @@ function SetupBuffers()
 {
 	var mesh = new Mesh();
 	//mesh.CreateSphere(0.5, 0.5, 0.5, 12);
-	mesh.CreateCube();
+	//mesh.CreateCube();
+	mesh.CreateQuad();
 	mesh.SetupBuffers(gl);
 	// Add a texture to it
 	SetupTexture("images/cubeTex.png", mesh);

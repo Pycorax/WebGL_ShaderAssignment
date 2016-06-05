@@ -33,6 +33,7 @@ function Mesh()
 	// -- Setup
 	this.SetupBuffers = SetupBuffersFunction;
 	// -- Mesh Builders
+	this.CreateQuad = CreateQuadFunction;
     this.CreateCube = CreateCubeFunction;
 	this.CreateSphere = CreateSphereFunction;
 }
@@ -63,6 +64,54 @@ function SetupBuffersFunction(gl)
 	this.normalBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.normals), gl.STATIC_DRAW);
+}
+
+function CreateQuadFunction()
+{
+	// vertices
+	this.vertices =
+	[
+		// Front and only Face
+		-1.0, -1.0, 0.0,
+		1.0, -1.0, 0.0,
+		1.0, 1.0, 0.0,
+		-1.0, 1.0, 0.0
+	];
+
+	// colors
+	this.colors =
+	[
+		[1.0, 1.0, 1.0, 1.0],
+		[1.0, 1.0, 1.0, 1.0],
+		[1.0, 1.0, 1.0, 1.0],
+		[1.0, 1.0, 1.0, 1.0]
+	];
+
+	// TexCoords
+	this.texCoords =
+	[
+		// Front
+		0.0, 0.0,
+		1.0, 0.0,
+		1.0, 1.0,
+		0.0, 1.0
+	];
+
+	// Define the indices
+	this.indices =
+	[
+		0, 1, 2,        0, 2, 3        // Front
+	];
+
+	// Define the Normals
+	this.normals =
+	[
+		// Front
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0,
+		0.0, 0.0, 1.0
+	];
 }
 
 function CreateCubeFunction()
