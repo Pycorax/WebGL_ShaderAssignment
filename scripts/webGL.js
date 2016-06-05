@@ -394,6 +394,7 @@ function SetupLights()
 function SetupBuffers()
 {
 	var mesh = new Mesh();
+	//mesh.CreateSphere(0.5, 0.5, 0.5, 12);
 	mesh.CreateCube();
 
 	// Create the Vertex Buffer and fill it up
