@@ -131,8 +131,8 @@ function Draw()
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "vPos");
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 	// -- Color
-	shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "vColor");
-	gl.enableVertexAttribArray(4);
+	// shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "vColor");
+	// gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
 	// -- Texture
 	shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "vTex");
 	gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
@@ -210,8 +210,8 @@ function Draw()
 		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
 		// Send color data into shader
-		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.colorBuffer);
-		gl.vertexAttribPointer(4, 4, gl.FLOAT, false, 0, 0);
+		// gl.bindBuffer(gl.ARRAY_BUFFER, mesh.colorBuffer);
+		// gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
 
 		// Send texCoord data into shader
 		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.texCoordBuffer);
@@ -222,7 +222,7 @@ function Draw()
 		gl.bindTexture(gl.TEXTURE_2D, mesh.tex);
 		gl.uniform1i(shaderProgram.samplerUniform, 0);
 
-		// Send normal data into shader
+		// Bind the normals
 		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
 

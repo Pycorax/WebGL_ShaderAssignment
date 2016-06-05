@@ -7,10 +7,7 @@ function Mesh()
     this.vertices = [];
     this.indices = [];
 
-	// Color
-	this.colors = [];
-
-    // Tex Coords
+    // Color
     this.texCoords = [];
 
     // Normals
@@ -19,7 +16,6 @@ function Mesh()
     // Buffer IDs
     this.vertexBuffer = 0;
     this.indexBuffer = 0;
-	this.texCoordBuffer = 0;
     this.colorBuffer = 0;
     this.normalBuffer = 0;
 
@@ -44,11 +40,6 @@ function SetupBuffersFunction(gl)
 	this.vertexBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
-
-	// Create the Color Buffer and fill it up
-	this.colorBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.colors), gl.STATIC_DRAW);
 
 	// Create the Color Buffer and fill it up
 	this.texCoordBuffer = gl.createBuffer();
@@ -156,6 +147,7 @@ function CreateCubeFunction()
             -1.0, 1.0, -1.0,
         ];
 
+        /*
         // Define Temporary Colours
         var tempColors =
         [
@@ -178,6 +170,7 @@ function CreateCubeFunction()
                 this.colors = this.colors.concat(c);
             }
         }
+        */
 
         // TexCoords
         this.texCoords =
@@ -311,6 +304,5 @@ function CreateCubeFunction()
 		{
 			this.indices.push(i);
 			this.texCoords.push(0.2);
-			this.colors.push([1.0, 1.0, 1.0, 1.0]);
 		}
 	}
