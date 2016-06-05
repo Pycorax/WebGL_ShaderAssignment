@@ -150,8 +150,8 @@ function Mtx44SetToRotation(mat, degrees, axisX, axisY, axisZ)
 	var x = axisX / mag;
 	var y = axisY / mag;
 	var z = axisZ / mag;
-	var c = Math.cos(degrees * 3.14 / 180.0);
-	var s = Math.sin(degrees * 3.14 / 180.0);
+	var c = Math.cos(ExtraMath.DegreeToRadians(degrees));
+	var s = Math.sin(ExtraMath.DegreeToRadians(degrees));
 
 	mat[0] = (x * x * (1.0 - c) + c);
 	mat[1] = (y * x * (1.0 - c) + z * s);
