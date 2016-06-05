@@ -16,7 +16,6 @@ function Mesh()
     // Buffer IDs
     this.vertexBuffer = 0;
     this.indexBuffer = 0;
-    this.colorBuffer = 0;
     this.normalBuffer = 0;
 
     // Transforms
@@ -266,6 +265,51 @@ function CreateCubeFunction()
 
 	function CreateSphereFunction(radiusLength, radiusWidth, radiusHeight, numSlice)
 	{
+		/*
+		for (var latNumber = 0; latNumber <= latitudeBands; latNumber++)
+		{
+			var theta = latNumber * Math.PI / latitudeBands;
+			var sinTheta = Math.sin(theta);
+			var cosTheta = Math.cos(theta);
+
+			for (var longNumber = 0; longNumber <= longitudeBands; longNumber++) 
+			{
+				var phi = longNumber * 2 * Math.PI / longitudeBands;
+				var sinPhi = Math.sin(phi);
+				var cosPhi = Math.cos(phi);
+
+				var x = cosPhi * sinTheta;
+				var y = cosTheta;
+				var z = sinPhi * sinTheta;
+				var u = 1 - (longNumber / longitudeBands);
+				var v = 1 - (latNumber / latitudeBands);
+
+				normalData.push(x);
+				normalData.push(y);
+				normalData.push(z);
+				textureCoordData.push(u);
+				textureCoordData.push(v);
+				vertexPositionData.push(radius * x);
+				vertexPositionData.push(radius * y);
+				vertexPositionData.push(radius * z);
+			}
+		}
+
+		var indexData = [];
+		for (var latNumber = 0; latNumber < latitudeBands; latNumber++) {
+			for (var longNumber = 0; longNumber < longitudeBands; longNumber++) {
+				var first = (latNumber * (longitudeBands + 1)) + longNumber;
+				var second = first + longitudeBands + 1;
+				indexData.push(first);
+				indexData.push(second);
+				indexData.push(first + 1);
+
+				indexData.push(second);
+				indexData.push(second + 1);
+				indexData.push(first + 1);
+			}
+		}
+		*/
 		// Calculate the difference in angle from the center between slices
 		var degreePerSlice = 360.0 / numSlice;
 
@@ -280,21 +324,25 @@ function CreateCubeFunction()
 				var phiIncreRad = ExtraMath.DegreeToRadians(phi + degreePerSlice);
 
 				// Calculate the vertex and normals for the first line of vertices
+				// -- x
 				this.vertices.push(radiusLength * (Math.cos(phiRad) * Math.cos(thetaRad)));
-				this.vertices.push(radiusHeight * Math.sin(phiRad));
-				this.vertices.push(radiusWidth * (Math.cos(phiRad) * Math.sin(thetaRad)));
-
 				this.normals.push(Math.cos(phiRad) * Math.cos(thetaRad));
+				// -- y
+				this.vertices.push(radiusHeight * Math.sin(phiRad));
 				this.normals.push(Math.sin(phiRad));
+				// -- z
+				this.vertices.push(radiusWidth * (Math.cos(phiRad) * Math.sin(thetaRad)));
 				this.normals.push(Math.cos(phiRad) * Math.sin(thetaRad));
 
 				// Calculate the vertex and normals for the second line of vertices
+				// -- x
 				this.vertices.push(radiusLength * (Math.cos(phiIncreRad) * Math.cos(thetaRad)));
-				this.vertices.push(radiusHeight * Math.sin(phiIncreRad));
-				this.vertices.push(radiusWidth * (Math.cos(phiIncreRad) * Math.sin(thetaRad)));
-
 				this.normals.push(Math.cos(phiIncreRad) * Math.cos(thetaRad));
+				// -- y
+				this.vertices.push(radiusHeight * Math.sin(phiIncreRad));
 				this.normals.push(Math.sin(phiIncreRad));
+				// -- z
+				this.vertices.push(radiusWidth * (Math.cos(phiIncreRad) * Math.sin(thetaRad)));
 				this.normals.push(Math.cos(phiIncreRad) * Math.sin(thetaRad));
 			}
 		}
@@ -302,7 +350,12 @@ function CreateCubeFunction()
 		// Add all these vertices into the indices
 		for (var i = 0; i < this.vertices.length; ++i)
 		{
-			this.indices.push(i);
+			// In the array of vertices, each xyz is not it's own element but side by sidein the array so we only add every 3rd one
+			if (i % 3 == 0)
+			{
+				// Divide by 3 for the same reasons above
+				this.indices.push(i / 3);
+			}
 			this.texCoords.push(0.2);
 		}
 	}

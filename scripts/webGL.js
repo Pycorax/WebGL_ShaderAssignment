@@ -209,10 +209,6 @@ function Draw()
 		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
-		// Send color data into shader
-		// gl.bindBuffer(gl.ARRAY_BUFFER, mesh.colorBuffer);
-		// gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
-
 		// Send texCoord data into shader
 		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.texCoordBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 2, gl.FLOAT, false, 0, 0);
@@ -242,6 +238,11 @@ function Draw()
 
 		// Draw the objects
 		gl.drawElements(gl.TRIANGLES, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
+
+		// Clean up
+		gl.disableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+		gl.disableVertexAttribArray(shaderProgram.vertexColorAttribute);
+		gl.disableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 	}
 }
 
@@ -394,9 +395,9 @@ function SetupLights()
 function SetupBuffers()
 {
 	var mesh = new Mesh();
-	//mesh.CreateSphere(0.5, 0.5, 0.5, 12);
+	mesh.CreateSphere(0.5, 0.5, 0.5, 36);
 	//mesh.CreateCube();
-	mesh.CreateQuad();
+	//mesh.CreateQuad();
 	mesh.SetupBuffers(gl);
 	// Add a texture to it
 	SetupTexture("images/cubeTex.png", mesh);
