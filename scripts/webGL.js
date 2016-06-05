@@ -95,7 +95,9 @@ function InputUpdate()
 				case 'd':
 					camera.MoveRight(deltaTime);
 					break;
-
+				case 'j':
+					camera.LookLeft(deltaTime);
+					break;
 			}
 		}
 	}
@@ -264,6 +266,7 @@ function Setup()
     // Set the Camera Position
     camera.position = [0.0, 0.0, -5.0];
     camera.target = [0.0, 0.0, 1.0];
+	camera.up = [0.0, 1.0, 0.0];
 
     // Render
     Tick();
