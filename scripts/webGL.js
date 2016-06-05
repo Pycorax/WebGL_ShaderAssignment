@@ -396,27 +396,7 @@ function SetupBuffers()
 	var mesh = new Mesh();
 	//mesh.CreateSphere(0.5, 0.5, 0.5, 12);
 	mesh.CreateCube();
-
-	// Create the Vertex Buffer and fill it up
-	mesh.vertexBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.vertices), gl.STATIC_DRAW);
-
-	// Create the Color Buffer and fill it up
-	mesh.colorBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, mesh.colorBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.colors), gl.STATIC_DRAW);
-
-	// Create the Index Buffer and fill it up
-	mesh.indexBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
-	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(mesh.indices), gl.STATIC_DRAW);
-
-	// Create the Normal Buffer and fill it up
-	mesh.normalBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(mesh.normals), gl.STATIC_DRAW);
-
+	mesh.SetupBuffers(gl);
 	// Add a texture to it
 	SetupTexture("images/cubeTex.png", mesh);
 

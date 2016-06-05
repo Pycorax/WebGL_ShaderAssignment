@@ -26,8 +26,34 @@ function Mesh()
     this.material = new Material();
 
     // Function Definitions
+	// -- Setup
+	this.SetupBuffers = SetupBuffersFunction;
+	// -- Mesh Builders
     this.CreateCube = CreateCubeFunction;
 	this.CreateSphere = CreateSphereFunction;
+}
+
+function SetupBuffersFunction(gl)
+{
+	// Create the Vertex Buffer and fill it up
+	this.vertexBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
+
+	// Create the Color Buffer and fill it up
+	this.colorBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.colorBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.colors), gl.STATIC_DRAW);
+
+	// Create the Index Buffer and fill it up
+	this.indexBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
+
+	// Create the Normal Buffer and fill it up
+	this.normalBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, this.normalBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.normals), gl.STATIC_DRAW);
 }
 
 function CreateCubeFunction()
