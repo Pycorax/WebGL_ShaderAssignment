@@ -1,6 +1,6 @@
 function Camera()
 {
-	this.moveSpeed = 0.001;
+	this.moveSpeed = 0.01;
 	this.lookSpeed = 0.1;
 	this.position = vec3.create();
 	this.target = vec3.create();
@@ -36,6 +36,7 @@ function MoveForwardBackward(camera, deltaTime)
 	// Calculate the view direction
 	var view = vec3.create();
 	vec3.subtract(camera.target, camera.position, view);
+	vec3.normalize(view);
 	// Calculate the vector in which we will move
 	vec3.scale(view, moveDist);
 	// Add this vector to the position
@@ -61,6 +62,7 @@ function MoveLeftRight(camera, deltaTime)
 	// Calculate the view direction
 	var view = vec3.create();
 	vec3.subtract(camera.target, camera.position, view);
+	vec3.normalize(view);
 	// Calculate the right direction
 	var right = vec3.create();
 	vec3.cross(view, camera.up, right);
