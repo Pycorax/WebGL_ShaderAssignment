@@ -139,7 +139,6 @@
 
        <script id ="VertexShader" type = "x-shader/x-vertex">
             attribute vec3 vPos;
-            // attribute vec4 vColor;
             attribute vec3 vNorm;
             attribute vec2 vTex;
 
@@ -147,7 +146,6 @@
             uniform mat4 uVMatrix;
             uniform mat4 uPMatrix;
 
-            //varying vec4 color;
             varying vec2 texCoord;
             varying vec3 normal;
             varying vec3 worldPos;
@@ -156,7 +154,6 @@
             {
                 gl_Position = uPMatrix * uVMatrix * uMMatrix * vec4(vPos, 1.0);
 
-                //color = vColor;
                 texCoord = vTex;
                 normal = vNorm;
                 worldPos = (uMMatrix * vec4(vPos, 1.0)).xyz;

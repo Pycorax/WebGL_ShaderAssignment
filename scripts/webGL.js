@@ -68,6 +68,8 @@ function TimeUpdate()
 
 function Animate()
 {
+	mat4.identity(drawList[0].transform);
+	mat4.rotateY(drawList[0].transform, timeSinceStart * 0.001);
 }
 
 function InputUpdate()
@@ -125,9 +127,6 @@ function Draw()
 	// -- Position
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "vPos");
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-	// -- Color
-	// shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "vColor");
-	// gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
 	// -- Texture
 	shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "vTex");
 	gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
@@ -200,22 +199,25 @@ function Draw()
 		// Set the model transform matrix to be this object's transform
 		mMatrix = mesh.transform
 
-		// Send vertex data into shader
+		// Bind and enable the vertex positions
 		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+		gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
-		// Send texCoord data into shader
+		// Bind and enable the texCoords
 		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.texCoordBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 2, gl.FLOAT, false, 0, 0);
+		gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
 
-		// Bind the texture
+		// Bind and enable the texture
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, mesh.tex);
 		gl.uniform1i(shaderProgram.samplerUniform, 0);
 
-		// Bind the normals
+		// Bind and enable the normals
 		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
+		gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
 
 		// Send index data into shader
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
@@ -385,10 +387,10 @@ function SetupLights()
 	lightList[2].position = [0, 0, 0];
 	lightList[2].direction = [0, 0, -1];
 	lightList[2].type = LIGHT_TYPE_DIRECTIONAL;
-	lightList[2].power = 2.0;
-	lightList[2].position = [0, 0, 0];
-	lightList[2].direction = [0, 1, 1];
-	lightList[2].type = LIGHT_TYPE_DIRECTIONAL;
+	lightList[3].power = 2.0;
+	lightList[3].position = [0, 0, 0];
+	lightList[3].direction = [0, 1, 1];
+	lightList[3].type = LIGHT_TYPE_DIRECTIONAL;
 }
 
 function SetupBuffers()
@@ -400,25 +402,29 @@ function SetupBuffers()
 	// -- Init
 	mesh.SetupBuffers(gl);
 	mat4.identity(mesh.transform);
-	mat4.translate(mesh.transform, [0.0, -1.0, 0.0]);
-	mat4.scale(mesh.transform, [100.0, 0.01, 100.0]);
+	//mat4.translate(mesh.transform, [0.0, -1.0, 0.0]);
+	//mat4.scale(mesh.transform, [100.0, 0.01, 100.0]);
 	//mat4.rotateX(mesh.transform, 90);
 	// -- Texture & Materials
-	SetupTexture("images/floor.png", mesh); mesh.material.diffuse = [1.0, 1.0, 1.0];
+	SetupTexture("images/cubeTex.png", mesh); mesh.material.diffuse = [1.0, 1.0, 1.0];
 	// -- Add to the list
 	drawList.push(mesh);
 
 	// Objects
-	var mesh2 = new Mesh();
-	// -- Type
-	mesh2.CreateCube();
-	// -- Init
-	mesh2.SetupBuffers(gl);
-	mat4.identity(mesh2.transform);
-	// -- Texture & Materials
-	SetupTexture("images/cubeTex.png", mesh2); mesh2.material.diffuse = [1.0, 1.0, 1.0];
-	// -- Add to the list
-	drawList.push(mesh);
+	for (var i = 0; i < 10; ++i)
+	{
+		var mesh2 = new Mesh();
+		// -- Type
+		mesh2.CreateCube();
+		// -- Init
+		mesh2.SetupBuffers(gl);
+		mat4.identity(mesh2.transform);
+		mat4.translate(mesh2.transform, [-1.0 - i*2, 0.0, 0.0]);
+		// -- Texture & Materials
+		SetupTexture("images/cubeTex.png", mesh2); mesh2.material.diffuse = [1.0, 1.0, 1.0];
+		// -- Add to the list
+		drawList.push(mesh);
+	}
 }
 
 function SetupTexture(file, mesh)
