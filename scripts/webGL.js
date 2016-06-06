@@ -68,8 +68,8 @@ function TimeUpdate()
 
 function Animate()
 {
-	mat4.identity(drawList[0].transform);
-	mat4.rotateY(drawList[0].transform, timeSinceStart * 0.001);
+	//mat4.identity(drawList[0].transform);
+	//mat4.rotateY(drawList[0].transform, timeSinceStart * 0.001);
 }
 
 function InputUpdate()
@@ -127,14 +127,13 @@ function Draw()
 	// -- Position
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "vPos");
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-	/*
+
 	// -- Texture
 	shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "vTex");
 	gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
 	// -- Normal
 	shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "vNorm");
 	gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-	*/
 
 	// Get the uniforms from the shader
 	// -- MVP
@@ -145,7 +144,6 @@ function Draw()
 	// -- Camera
 	shaderProgram.cameraView = gl.getUniformLocation(shaderProgram, "viewDirection");
 	// -- Material
-	/*
 	shaderProgram.diffuseColor = gl.getUniformLocation(shaderProgram, "diffuseColor");
 	shaderProgram.ambientColor = gl.getUniformLocation(shaderProgram, "ambientColor");
 	shaderProgram.specularColor = gl.getUniformLocation(shaderProgram, "specularColor");
@@ -183,7 +181,6 @@ function Draw()
 		gl.uniform1f(shaderProgram.spotInnerAngle, lightList[i].spotInnerAngle);
 		gl.uniform1f(shaderProgram.spotOuterAngle, lightList[i].spotOuterAngle);
 	}
-	*/
 
 	// Defining Projection Matrix
 	mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 10000.0, pMatrix);
@@ -194,7 +191,10 @@ function Draw()
 	mat4.lookAt(camera.position, camera.target, camera.up, vMatrix);
 
 	// Define the Camera View
-	gl.uniform3f(shaderProgram.cameraView, camera.target[0], camera.target[1], camera.target[2]);
+	var cameraView = vec3.create();
+	vec3.subtract(camera.position, camera.target, cameraView);
+	vec3.normalize(cameraView);
+	gl.uniform3f(shaderProgram.cameraView, cameraView[0], cameraView[1], cameraView[2]);
 
 	// Drawing Objects
 	for (var i = 0; i < drawList.length; ++i)
@@ -209,7 +209,6 @@ function Draw()
 		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 		gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
-/*
 		// Bind and enable the texCoords
 		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.texCoordBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 2, gl.FLOAT, false, 0, 0);
@@ -224,7 +223,7 @@ function Draw()
 		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
 		gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-*/
+
 		// Send index data into shader
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
 
@@ -232,19 +231,19 @@ function Draw()
 		gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(shaderProgram.vMatrixUniform, false, vMatrix);
 		gl.uniformMatrix4fv(shaderProgram.mMatrixUniform, false, mMatrix);
-/*
+
 		// Set the lighting Material uniforms
 		gl.uniform3f(shaderProgram.diffuseColor, mesh.material.diffuse[0], mesh.material.diffuse[1], mesh.material.diffuse[2]);
 		gl.uniform3f(shaderProgram.ambientColor, mesh.material.ambient[0], mesh.material.ambient[1], mesh.material.ambient[2]);
 		gl.uniform3f(shaderProgram.specularColor, mesh.material.specular[0], mesh.material.specular[1], mesh.material.specular[2]);
 		gl.uniform1f(shaderProgram.shininess, mesh.material.shininess);
-*/
+
 		// Draw the objects
 		gl.drawElements(gl.TRIANGLES, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
 
 		// Clean up
-		//gl.disableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-		//gl.disableVertexAttribArray(shaderProgram.vertexColorAttribute);
+		gl.disableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+		gl.disableVertexAttribArray(shaderProgram.vertexColorAttribute);
 		gl.disableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 	}
 }
@@ -269,8 +268,8 @@ function Setup()
 	gl.viewportHeight = canvas.height;
 
 	// Load Shaders
-	shaderProgram = GetShaderProgram("BasicVertexShader", "BasicFragmentShader");
-	//shaderProgram = GetShaderProgram("VertexShader", "FragmentShader");
+	//shaderProgram = GetShaderProgram("BasicVertexShader", "BasicFragmentShader");
+	shaderProgram = GetShaderProgram("VertexShader", "FragmentShader");
 
 	// Initialize Lights
 	SetupLights();
@@ -383,21 +382,21 @@ function SetupLights()
 
 	// Set it's params
 	lightList[0].power = 1.0;
-	lightList[0].position = [0, 0, 2];
-	lightList[0].type = LIGHT_TYPE_SPOT;
+	lightList[0].position = [-1, 0.5, -1];
+	lightList[0].type = LIGHT_TYPE_POINT;
 	lightList[0].direction = [0, 0, 1];
-	lightList[1].power = 1.0;
-	lightList[1].position = [0, 10, 5];
-	lightList[1].direction = [0, 0, 1];
-	lightList[1].type = LIGHT_TYPE_DIRECTIONAL;
-	lightList[2].power = 1.0;
-	lightList[2].position = [0, 0, 0];
-	lightList[2].direction = [0, 0, -1];
-	lightList[2].type = LIGHT_TYPE_DIRECTIONAL;
-	lightList[3].power = 2.0;
-	lightList[3].position = [0, 0, 0];
-	lightList[3].direction = [0, 1, 1];
-	lightList[3].type = LIGHT_TYPE_DIRECTIONAL;
+	// lightList[1].power = 1.0;
+	// lightList[1].position = [0, 10, 5];
+	// lightList[1].direction = [0, 0, 1];
+	// lightList[1].type = LIGHT_TYPE_DIRECTIONAL;
+	// lightList[2].power = 1.0;
+	// lightList[2].position = [0, 0, 0];
+	// lightList[2].direction = [0, 0, -1];
+	// lightList[2].type = LIGHT_TYPE_DIRECTIONAL;
+	// lightList[3].power = 2.0;
+	// lightList[3].position = [0, 0, 0];
+	// lightList[3].direction = [0, 1, 1];
+	// lightList[3].type = LIGHT_TYPE_DIRECTIONAL;
 }
 
 function SetupBuffers()
@@ -405,7 +404,7 @@ function SetupBuffers()
 	// Floor
 	var mesh = new Mesh();
 	// -- Type
-	mesh.CreateCube();
+	mesh.CreateSphere(0.5, 0.5, 0.5, 120);
 	// -- Init
 	mesh.SetupBuffers(gl);
 	mat4.identity(mesh.transform);
@@ -413,25 +412,25 @@ function SetupBuffers()
 	//mat4.scale(mesh.transform, [100.0, 0.01, 100.0]);
 	//mat4.rotateX(mesh.transform, 90);
 	// -- Texture & Materials
-	SetupTexture("images/cubeTex.png", mesh); mesh.material.diffuse = [1.0, 1.0, 1.0];
+	SetupTexture("images/floor.png", mesh); mesh.material.diffuse = [1.0, 1.0, 1.0];
 	// -- Add to the list
 	drawList.push(mesh);
 
 	// Objects
-	for (var i = 0; i < 10; ++i)
-	{
-		var mesh2 = new Mesh();
-		// -- Type
-		mesh2.CreateCube();
-		// -- Init
-		mesh2.SetupBuffers(gl);
-		mat4.identity(mesh2.transform);
-		mat4.translate(mesh2.transform, [-1.0 - i*2, 0.0, 0.0]);
-		// -- Texture & Materials
-		SetupTexture("images/cubeTex.png", mesh2); mesh2.material.diffuse = [1.0, 1.0, 1.0];
-		// -- Add to the list
-		drawList.push(mesh);
-	}
+	// for (var i = 0; i < 10; ++i)
+	// {
+	// 	var mesh2 = new Mesh();
+	// 	// -- Type
+	// 	mesh2.CreateCube();
+	// 	// -- Init
+	// 	mesh2.SetupBuffers(gl);
+	// 	mat4.identity(mesh2.transform);
+	// 	mat4.translate(mesh2.transform, [-1.0 - i*2, 0.0, 0.0]);
+	// 	// -- Texture & Materials
+	// 	SetupTexture("images/cubeTex.png", mesh2); mesh2.material.diffuse = [1.0, 1.0, 1.0];
+	// 	// -- Add to the list
+	// 	drawList.push(mesh);
+	// }
 }
 
 function SetupTexture(file, mesh)
