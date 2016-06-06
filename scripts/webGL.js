@@ -127,12 +127,14 @@ function Draw()
 	// -- Position
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "vPos");
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+	/*
 	// -- Texture
 	shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "vTex");
 	gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
 	// -- Normal
 	shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "vNorm");
 	gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+	*/
 
 	// Get the uniforms from the shader
 	// -- MVP
@@ -143,10 +145,12 @@ function Draw()
 	// -- Camera
 	shaderProgram.cameraView = gl.getUniformLocation(shaderProgram, "viewDirection");
 	// -- Material
+	/*
 	shaderProgram.diffuseColor = gl.getUniformLocation(shaderProgram, "diffuseColor");
 	shaderProgram.ambientColor = gl.getUniformLocation(shaderProgram, "ambientColor");
 	shaderProgram.specularColor = gl.getUniformLocation(shaderProgram, "specularColor");
 	shaderProgram.shininess = gl.getUniformLocation(shaderProgram, "shininess");
+
 
 	// Lights
 	// -- Loop through all the lights
@@ -179,6 +183,7 @@ function Draw()
 		gl.uniform1f(shaderProgram.spotInnerAngle, lightList[i].spotInnerAngle);
 		gl.uniform1f(shaderProgram.spotOuterAngle, lightList[i].spotOuterAngle);
 	}
+	*/
 
 	// Defining Projection Matrix
 	mat4.perspective(45, gl.viewportWidth / gl.viewportHeight, 0.1, 10000.0, pMatrix);
@@ -204,6 +209,7 @@ function Draw()
 		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 		gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
+/*
 		// Bind and enable the texCoords
 		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.texCoordBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 2, gl.FLOAT, false, 0, 0);
@@ -218,7 +224,7 @@ function Draw()
 		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.normalBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
 		gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-
+*/
 		// Send index data into shader
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.indexBuffer);
 
@@ -226,19 +232,19 @@ function Draw()
 		gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(shaderProgram.vMatrixUniform, false, vMatrix);
 		gl.uniformMatrix4fv(shaderProgram.mMatrixUniform, false, mMatrix);
-
+/*
 		// Set the lighting Material uniforms
 		gl.uniform3f(shaderProgram.diffuseColor, mesh.material.diffuse[0], mesh.material.diffuse[1], mesh.material.diffuse[2]);
 		gl.uniform3f(shaderProgram.ambientColor, mesh.material.ambient[0], mesh.material.ambient[1], mesh.material.ambient[2]);
 		gl.uniform3f(shaderProgram.specularColor, mesh.material.specular[0], mesh.material.specular[1], mesh.material.specular[2]);
 		gl.uniform1f(shaderProgram.shininess, mesh.material.shininess);
-
+*/
 		// Draw the objects
 		gl.drawElements(gl.TRIANGLES, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
 
 		// Clean up
-		gl.disableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-		gl.disableVertexAttribArray(shaderProgram.vertexColorAttribute);
+		//gl.disableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+		//gl.disableVertexAttribArray(shaderProgram.vertexColorAttribute);
 		gl.disableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 	}
 }
@@ -263,7 +269,8 @@ function Setup()
 	gl.viewportHeight = canvas.height;
 
 	// Load Shaders
-	shaderProgram = GetShaderProgram("VertexShader", "FragmentShader");
+	shaderProgram = GetShaderProgram("BasicVertexShader", "BasicFragmentShader");
+	//shaderProgram = GetShaderProgram("VertexShader", "FragmentShader");
 
 	// Initialize Lights
 	SetupLights();
