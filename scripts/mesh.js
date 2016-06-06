@@ -265,97 +265,63 @@ function CreateCubeFunction()
 
 	function CreateSphereFunction(radiusLength, radiusWidth, radiusHeight, numSlice)
 	{
-		/*
-		for (var latNumber = 0; latNumber <= latitudeBands; latNumber++)
+		// Wrap around in the vertical
+		for (var height = 0; height <= numSlice; height++)
 		{
-			var theta = latNumber * Math.PI / latitudeBands;
+			// Angle and Trigo values we willl need to calculate position
+			var theta = height * Math.PI / numSlice;
 			var sinTheta = Math.sin(theta);
 			var cosTheta = Math.cos(theta);
 
-			for (var longNumber = 0; longNumber <= longitudeBands; longNumber++) 
+			// Wrap around in the horizontal
+			for (var width = 0; width <= numSlice; width++)
 			{
-				var phi = longNumber * 2 * Math.PI / longitudeBands;
+				// Angle and Trigo values we willl need to calculate position
+				var phi = width * 2 * Math.PI / numSlice;
 				var sinPhi = Math.sin(phi);
 				var cosPhi = Math.cos(phi);
 
-				var x = cosPhi * sinTheta;
-				var y = cosTheta;
-				var z = sinPhi * sinTheta;
-				var u = 1 - (longNumber / longitudeBands);
-				var v = 1 - (latNumber / latitudeBands);
+				// Calculate the normals and store it coz we will need it to calculate vertex position
+				var xNormal = cosPhi * sinTheta;
+				var yNormal = cosTheta;
+				var zNormal = sinPhi * sinTheta;
 
-				normalData.push(x);
-				normalData.push(y);
-				normalData.push(z);
-				textureCoordData.push(u);
-				textureCoordData.push(v);
-				vertexPositionData.push(radius * x);
-				vertexPositionData.push(radius * y);
-				vertexPositionData.push(radius * z);
+				// Vertices
+				this.vertices.push(radiusLength * xNormal);
+				this.vertices.push(radiusWidth * yNormal);
+				this.vertices.push(radiusHeight * zNormal);
+
+				// Normals
+				this.normals.push(xNormal);
+				this.normals.push(yNormal);
+				this.normals.push(zNormal);
+
+				// Tex Coords
+				this.texCoords.push(1 - (width / numSlice));
+				this.texCoords.push(1 - (height / numSlice));
 			}
 		}
 
-		var indexData = [];
-		for (var latNumber = 0; latNumber < latitudeBands; latNumber++) {
-			for (var longNumber = 0; longNumber < longitudeBands; longNumber++) {
-				var first = (latNumber * (longitudeBands + 1)) + longNumber;
-				var second = first + longitudeBands + 1;
-				indexData.push(first);
-				indexData.push(second);
-				indexData.push(first + 1);
-
-				indexData.push(second);
-				indexData.push(second + 1);
-				indexData.push(first + 1);
-			}
-		}
-		*/
-		// Calculate the difference in angle from the center between slices
-		var degreePerSlice = 360.0 / numSlice;
-
-		// Define the Vertices and their Normals
-		for (var phi = -90; phi < 90; phi += degreePerSlice)
+		// Wrap around in the vertical
+		for (var height = 0; height < numSlice; height++)
 		{
-			for (var theta = 0; theta <= 360; theta += degreePerSlice)
+			// Wrap around in the horizontal
+			for (var width = 0; width < numSlice; width++)
 			{
-				// Conver to Radians
-				var phiRad = ExtraMath.DegreeToRadians(phi);
-				var thetaRad = ExtraMath.DegreeToRadians(theta);
-				var phiIncreRad = ExtraMath.DegreeToRadians(phi + degreePerSlice);
+				// Calculate the index at which is the first index (top left)
+				var first = (height * (numSlice + 1)) + width;
+				// Calculate the index at which is the second index (bottom left)
+				var second = first + numSlice + 1;
 
-				// Calculate the vertex and normals for the first line of vertices
-				// -- x
-				this.vertices.push(radiusLength * (Math.cos(phiRad) * Math.cos(thetaRad)));
-				this.normals.push(Math.cos(phiRad) * Math.cos(thetaRad));
-				// -- y
-				this.vertices.push(radiusHeight * Math.sin(phiRad));
-				this.normals.push(Math.sin(phiRad));
-				// -- z
-				this.vertices.push(radiusWidth * (Math.cos(phiRad) * Math.sin(thetaRad)));
-				this.normals.push(Math.cos(phiRad) * Math.sin(thetaRad));
+				// Mark the first triangle
+				this.indices.push(first);				// top left
+				this.indices.push(second);				// bottom left
+				this.indices.push(first + 1);			// top right
 
-				// Calculate the vertex and normals for the second line of vertices
-				// -- x
-				this.vertices.push(radiusLength * (Math.cos(phiIncreRad) * Math.cos(thetaRad)));
-				this.normals.push(Math.cos(phiIncreRad) * Math.cos(thetaRad));
-				// -- y
-				this.vertices.push(radiusHeight * Math.sin(phiIncreRad));
-				this.normals.push(Math.sin(phiIncreRad));
-				// -- z
-				this.vertices.push(radiusWidth * (Math.cos(phiIncreRad) * Math.sin(thetaRad)));
-				this.normals.push(Math.cos(phiIncreRad) * Math.sin(thetaRad));
+				// Mark the second triangle
+				this.indices.push(second);				// bottom left
+				this.indices.push(second + 1);			// bottom right
+				this.indices.push(first + 1);			// top right
 			}
-		}
-
-		// Add all these vertices into the indices
-		for (var i = 0; i < this.vertices.length; ++i)
-		{
-			// In the array of vertices, each xyz is not it's own element but side by sidein the array so we only add every 3rd one
-			if (i % 3 == 0)
-			{
-				// Divide by 3 for the same reasons above
-				this.indices.push(i / 3);
-			}
-			this.texCoords.push(0.2);
 		}
 	}
