@@ -68,10 +68,6 @@ function TimeUpdate()
 
 function Animate()
 {
-	// Rotate the cube
-	mat4.identity(drawList[0].transform);
-	//mat4.rotate(drawList[0].transform, timeSinceStart * 0.001, [-1.0, 1.0, -1.0]);
-	mat4.rotate(drawList[0].transform, timeSinceStart * 0.001, [0.0, 1.0, 0.0]);
 }
 
 function InputUpdate()
@@ -122,7 +118,6 @@ function Draw()
 	gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 	// Clear the color as well as the depth buffer.
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
 	// Specify which shader to use
 	gl.useProgram(shaderProgram);
 
@@ -247,8 +242,8 @@ function Draw()
 }
 
 /*
-* GL Code
-*/
+ * GL Code
+ */
 function Setup()
 {
 	// Get a handle to the canvas element
@@ -390,22 +385,39 @@ function SetupLights()
 	lightList[2].position = [0, 0, 0];
 	lightList[2].direction = [0, 0, -1];
 	lightList[2].type = LIGHT_TYPE_DIRECTIONAL;
+	lightList[2].power = 2.0;
+	lightList[2].position = [0, 0, 0];
+	lightList[2].direction = [0, 1, 1];
+	lightList[2].type = LIGHT_TYPE_DIRECTIONAL;
 }
 
 function SetupBuffers()
 {
+	// Floor
 	var mesh = new Mesh();
-	mesh.CreateSphere(0.5, 0.5, 0.5, 36);
-	//mesh.CreateCube();
-	//mesh.CreateQuad();
+	// -- Type
+	mesh.CreateCube();
+	// -- Init
 	mesh.SetupBuffers(gl);
-	// Add a texture to it
-	SetupTexture("images/cubeTex.png", mesh);
+	mat4.identity(mesh.transform);
+	mat4.translate(mesh.transform, [0.0, -1.0, 0.0]);
+	mat4.scale(mesh.transform, [100.0, 0.01, 100.0]);
+	//mat4.rotateX(mesh.transform, 90);
+	// -- Texture & Materials
+	SetupTexture("images/floor.png", mesh); mesh.material.diffuse = [1.0, 1.0, 1.0];
+	// -- Add to the list
+	drawList.push(mesh);
 
-	// Set the material
-	mesh.material.diffuse = [1.0, 1.0, 1.0];
-
-	// Add this mesh to the list of objects to draw
+	// Objects
+	var mesh2 = new Mesh();
+	// -- Type
+	mesh2.CreateCube();
+	// -- Init
+	mesh2.SetupBuffers(gl);
+	mat4.identity(mesh2.transform);
+	// -- Texture & Materials
+	SetupTexture("images/cubeTex.png", mesh2); mesh2.material.diffuse = [1.0, 1.0, 1.0];
+	// -- Add to the list
 	drawList.push(mesh);
 }
 
