@@ -68,8 +68,8 @@ function TimeUpdate()
 
 function Animate()
 {
-	//mat4.identity(drawList[0].transform);
-	//mat4.rotateY(drawList[0].transform, timeSinceStart * 0.001);
+	mat4.identity(drawList[0].transform);
+	mat4.rotateY(drawList[0].transform, timeSinceStart * 0.001);
 }
 
 function InputUpdate()
@@ -140,6 +140,7 @@ function Draw()
 	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
 	shaderProgram.vMatrixUniform = gl.getUniformLocation(shaderProgram, "uVMatrix");
 	shaderProgram.mMatrixUniform = gl.getUniformLocation(shaderProgram, "uMMatrix");
+	shaderProgram.mvInverseTransposeMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVInverseTransposeMatrix");
 	shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
 	// -- Camera
 	shaderProgram.cameraView = gl.getUniformLocation(shaderProgram, "viewDirection");
@@ -231,6 +232,12 @@ function Draw()
 		gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(shaderProgram.vMatrixUniform, false, vMatrix);
 		gl.uniformMatrix4fv(shaderProgram.mMatrixUniform, false, mMatrix);
+
+		var mvInverseTransposeMtx = mat4.create();
+		mvInverseTransposeMtx = mMatrix;
+		mat4.inverse(mvInverseTransposeMtx);
+		mat4.transpose(mvInverseTransposeMtx);
+		gl.uniformMatrix4fv(shaderProgram.mvInverseTransposeMatrixUniform, false, mvInverseTransposeMtx);
 
 		// Set the lighting Material uniforms
 		gl.uniform3f(shaderProgram.diffuseColor, mesh.material.diffuse[0], mesh.material.diffuse[1], mesh.material.diffuse[2]);
@@ -386,6 +393,10 @@ function SetupLights()
 	lightList[0].type = LIGHT_TYPE_POINT;
 	lightList[0].direction = [0, 0, 1];
 	// lightList[1].power = 1.0;
+	// lightList[1].position = [5, 0.5, -1];
+	// lightList[1].type = LIGHT_TYPE_POINT;
+	// lightList[1].direction = [0, 0, 1];
+	// lightList[1].power = 1.0;
 	// lightList[1].position = [0, 10, 5];
 	// lightList[1].direction = [0, 0, 1];
 	// lightList[1].type = LIGHT_TYPE_DIRECTIONAL;
@@ -412,7 +423,7 @@ function SetupBuffers()
 	//mat4.scale(mesh.transform, [100.0, 0.01, 100.0]);
 	//mat4.rotateX(mesh.transform, 90);
 	// -- Texture & Materials
-	SetupTexture("images/floor.png", mesh); mesh.material.diffuse = [1.0, 1.0, 1.0];
+	SetupTexture("images/cubeTex.png", mesh); // mesh.material.diffuse = [1.0, 1.0, 1.0];
 	// -- Add to the list
 	drawList.push(mesh);
 

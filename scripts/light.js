@@ -14,9 +14,9 @@ function Light()
     this.direction = vec3.create();
 
     // Lighting Coefficients
-    this.kAmbient = 0.5;
-    this.kDiffuse = 0.5;
-    this.kSpecular = 0.5;
+    this.kAmbient = 1.0;
+    this.kDiffuse = 1.0;
+    this.kSpecular = 1.0;
 
     // Attenuation
     this.kConstant = 1.0;
