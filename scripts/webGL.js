@@ -184,9 +184,16 @@ function InputUpdate()
 				case 'r':
 					camera.Reset();
 					break;
+				case 't':
+					ToggleColourSwapShowcase(false);
+					break;
+				case 'y':
+					ToggleColourSwapShowcase(true);
+					break;
+
 			}
 
-			if (key >= '1' && key <= '5')
+			if (key >= '1' && key <= '6')
 			{
 				ToggleLight(key);
 			}
@@ -485,19 +492,19 @@ function SetupLights()
 	lightList[0].color = [1.0, 0.792, 0.219];
 	// // -- Light 2
 	lightList[1].power = 1.0;
-	lightList[1].position = [0.0, 2.5, 0];
+	lightList[1].position = [0.0, 2.5, 2.5];
 	lightList[1].color = [0.0, 0.0, 1.0];
 	lightList[1].type = LIGHT_TYPE_POINT;
 	// -- Light 3
 	lightList[2].power = 1.0;
-	lightList[2].position = [5.0, 2.5, 0];
+	lightList[2].position = [5.0, 2.5, 2.5];
 	lightList[2].color = [0.0, 1.0, 0.0];
 	lightList[2].type = LIGHT_TYPE_POINT;
 	// -- Light 4
 	lightList[3].power = 1.0;
-	lightList[3].position = [8.0, 2.5, -8.0];
+	lightList[3].position = [2.5, 2.5, -2.5];
 	lightList[3].color = [1.0, 0.0, 0.0];
-	lightList[3].type = LIGHT_TYPE_SPOT;
+	lightList[3].type = LIGHT_TYPE_POINT;
 	lightList[3].direction = [0.0, 1.0, 0.0];
 	lightList[3].cosInner = 10.0;
 	lightList[3].cosOuter = 20.0;
@@ -506,6 +513,16 @@ function SetupLights()
 	lightList[4].position = [2.5, 0.0, 0];
 	lightList[4].color = [1.0, 1.0, 1.0];
 	lightList[4].type = LIGHT_TYPE_POINT;
+	// -- Light 6
+	lightList[5].enabled = false;
+	lightList[5].power = 1.0;
+	lightList[5].position = [2.5, 2.5, 8.5];
+	lightList[5].color = [1.0, 1.0, 1.0];
+	lightList[5].type = LIGHT_TYPE_SPOT;
+	lightList[5].direction = [0.0, 0.0, -1.0];
+	lightList[5].cosInner = 30.0;
+	lightList[5].cosOuter = 50.0;
+	lightList[5].kQuadratic = 0.01;
 }
 
 function SetupBuffers()
@@ -642,8 +659,18 @@ function ToggleLight(lightIndex)
 {
 	lightIndex = Number(lightIndex);
 
-	if (lightIndex >= 1 && lightIndex <= 5)
+	if (lightIndex >= 1 && lightIndex <= 6)
 	{
 		lightList[lightIndex - 1].enabled = !lightList[lightIndex - 1].enabled;
 	}
+}
+
+function ToggleColourSwapShowcase(show)
+{
+	for (var i = 0; i < 4; ++i)
+	{
+		lightList[i].enabled = !show;
+	}
+
+	lightList[5].enabled = show;
 }
