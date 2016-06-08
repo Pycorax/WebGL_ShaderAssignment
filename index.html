@@ -19,6 +19,7 @@
             // Light struct
             struct Light
             {
+				bool enabled;
 				float power;
                 int type;
                 vec3 position;
@@ -78,6 +79,12 @@
 				// Loop through all the lights
 				for (int i = 0; i < MAX_LIGHTS; ++i)
 				{
+					// Check if it is enabled
+					if (light[i].enabled == false)
+					{
+						continue;
+					}
+
 					// Calculate the light direction
 	                vec3 lightDir;
 	                if (light[i].type == LIGHT_DIRECTIONAL)

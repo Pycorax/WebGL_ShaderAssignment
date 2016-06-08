@@ -109,6 +109,11 @@ function InputUpdate()
 					camera.Reset();
 					break;
 			}
+
+			if (key >= '1' && key <= '5')
+			{
+				ToggleLight(key);
+			}
 		}
 	}
 }
@@ -158,6 +163,7 @@ function Draw()
 	for (var currLight = 0; currLight < MAX_LIGHTS && currLight < lightList.length; ++currLight)
 	{
 		// -- Get Uniforms
+		shaderProgram.lightEnabled = gl.getUniformLocation(shaderProgram, "light[" + currLight + "].enabled");
 		shaderProgram.lightPower = gl.getUniformLocation(shaderProgram, "light[" + currLight + "].power");
 		shaderProgram.lightType = gl.getUniformLocation(shaderProgram, "light[" + currLight + "].type");
 		shaderProgram.lightPos = gl.getUniformLocation(shaderProgram, "light[" + currLight + "].position");
@@ -172,6 +178,7 @@ function Draw()
 		shaderProgram.spotInnerAngle = gl.getUniformLocation(shaderProgram, "light[" + currLight + "].spotInnerAngle");
 		shaderProgram.spotOuterAngle = gl.getUniformLocation(shaderProgram, "light[" + currLight + "].spotOuterAngle");
 		// -- Define the values
+		gl.uniform1i(shaderProgram.lightEnabled, lightList[currLight].enabled);
 		gl.uniform1f(shaderProgram.lightPower, lightList[currLight].power);
 		gl.uniform1i(shaderProgram.lightType, lightList[currLight].type);
 		gl.uniform3f(shaderProgram.lightPos, lightList[currLight].position[0], lightList[currLight].position[1], lightList[currLight].position[2]);
@@ -386,26 +393,33 @@ function SetupLights()
 
 	// Set it's params
 	// -- Light 1
-	// lightList[0].power = 0.25;
-	// lightList[0].type = LIGHT_TYPE_DIRECTIONAL;
-	// lightList[0].direction = [1, 1, 0];
-	// lightList[0].color = [1.0, 0.792, 0.219];
-	// // -- Light 2
-	// lightList[1].power = 1.0;
-	// lightList[1].position = [5.0, -15.0, 0];
-	// lightList[1].type = LIGHT_TYPE_POINT;
+	lightList[0].power = 0.25;
+	lightList[0].type = LIGHT_TYPE_DIRECTIONAL;
+	lightList[0].direction = [1, 1, 0];
+	lightList[0].color = [1.0, 0.792, 0.219];
+	// -- Light 2
+	lightList[1].power = 1.0;
+	lightList[1].position = [5.0, -15.0, 0];
+	lightList[1].color = [0.0, 0.0, 0.6];
+	lightList[1].type = LIGHT_TYPE_POINT;
 	// -- Light 3
 	lightList[2].power = 1.0;
 	lightList[2].position = [-5, 0, 0];
 	lightList[2].direction = [-1, 0, 0];
     lightList[2].spotInnerAngle = 5.0;
     lightList[2].spotOuterAngle = 10.0;
+	lightList[2].color = [0.0, 0.3, 0.0];
 	lightList[2].type = LIGHT_TYPE_SPOT;
-	// lightList[2].type = LIGHT_TYPE_DIRECTIONAL;
-	// lightList[3].power = 2.0;
-	// lightList[3].position = [0, 0, 0];
-	// lightList[3].direction = [0, 1, 1];
-	// lightList[3].type = LIGHT_TYPE_DIRECTIONAL;
+	// -- Light 4
+	lightList[3].power = 1.0;
+	lightList[3].position = [0.0, 15.0, 0];
+	lightList[3].color = [1.0, 1.0, 0.0];
+	lightList[3].type = LIGHT_TYPE_POINT;
+	// -- Light 5
+	lightList[4].power = 1.0;
+	lightList[4].type = LIGHT_TYPE_DIRECTIONAL;
+	lightList[4].direction = [0, 0, 1];
+	lightList[4].color = [1.0, 1.0, 1.0];
 }
 
 function SetupBuffers()
@@ -450,4 +464,14 @@ function InputKeyDown(event)
 function InputKeyUp(event)
 {
 	keysPressed[event.key] = false;
+}
+
+function ToggleLight(lightIndex)
+{
+	lightIndex = Number(lightIndex);
+
+	if (lightIndex >= 1 && lightIndex <= 5)
+	{
+		lightList[lightIndex - 1].enabled = !lightList[lightIndex - 1].enabled;
+	}
 }
