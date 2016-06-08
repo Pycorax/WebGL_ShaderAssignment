@@ -20,6 +20,7 @@ var pMatrix = mat4.create();        		// Projection Matrix
 var mMatrix = mat4.create();        		// Model Matrix
 // Animation
 var marathonCubeState = 0;					// 0: Left, 1: Back, 2: Right, 3: Front
+var lightMoveForward = false;
 
 /*
 * Callback Code
@@ -124,6 +125,27 @@ function Animate()
 			break;
 	}
 
+	// Center Light Movement
+	const LIGHT_MOVE_SPEED = 0.0025;
+	// Check to go which direction
+	if (lightList[4].position[2] < -5.0)
+	{
+		lightMoveForward = false;
+	}
+	else  if (lightList[4].position[2] > 5.0)
+	{
+		lightMoveForward = true;
+	}
+	if (lightMoveForward)
+	{
+		// Move Forward
+		lightList[4].position[2] -= deltaTime * LIGHT_MOVE_SPEED;
+	}
+	else
+	{
+		// Move Backward
+		lightList[4].position[2] += deltaTime * LIGHT_MOVE_SPEED;
+	}
 }
 
 function InputUpdate()
@@ -453,32 +475,28 @@ function SetupLights()
 	lightList[0].direction = [0, 1, 0];
 	lightList[0].color = [1.0, 0.792, 0.219];
 	// // -- Light 2
-	// lightList[1].power = 1.0;
-	// lightList[1].position = [5.0, -15.0, 0];
-	// lightList[1].color = [0.0, 0.0, 0.6];
-	// lightList[1].type = LIGHT_TYPE_POINT;
-	// // -- Light 3
-	// lightList[2].power = 1.0;
-	// lightList[2].position = [-5, 0, 0];
-	// lightList[2].direction = [-1, 0, 0];
-    // lightList[2].spotInnerAngle = 5.0;
-    // lightList[2].spotOuterAngle = 10.0;
-	// lightList[2].color = [0.0, 0.3, 0.0];
-	// lightList[2].type = LIGHT_TYPE_SPOT;
-	// // -- Light 4
-	// lightList[3].power = 1.0;
-	// lightList[3].position = [0.0, 15.0, 0];
-	// lightList[3].color = [1.0, 1.0, 0.0];
-	// lightList[3].type = LIGHT_TYPE_POINT;
-	// // -- Light 5
-	// lightList[4].power = 1.0;
-	// lightList[4].type = LIGHT_TYPE_DIRECTIONAL;
-	// lightList[4].direction = [0, 0, 1];
-	// lightList[4].color = [1.0, 1.0, 1.0];
+	lightList[1].power = 1.0;
+	lightList[1].position = [0.0, 2.5, 0];
+	lightList[1].color = [0.0, 0.0, 1.0];
+	lightList[1].type = LIGHT_TYPE_POINT;
+	// -- Light 3
+	lightList[2].power = 1.0;
+	lightList[2].position = [5.0, 2.5, 0];
+	lightList[2].color = [0.0, 1.0, 0.0];
+	lightList[2].type = LIGHT_TYPE_POINT;
+	// -- Light 4
 	lightList[3].power = 1.0;
-	lightList[3].position = [2.5, 0.0, 0];
-	lightList[3].color = [1.0, 1.0, 1.0];
-	lightList[3].type = LIGHT_TYPE_POINT;
+	lightList[3].position = [8.0, 2.5, -8.0];
+	lightList[3].color = [1.0, 0.0, 0.0];
+	lightList[3].type = LIGHT_TYPE_SPOT;
+	lightList[3].direction = [0.0, 1.0, 0.0];
+	lightList[3].cosInner = 10.0;
+	lightList[3].cosOuter = 20.0;
+	// -- Light 5
+	lightList[4].power = 1.0;
+	lightList[4].position = [2.5, 0.0, 0];
+	lightList[4].color = [1.0, 1.0, 1.0];
+	lightList[4].type = LIGHT_TYPE_POINT;
 }
 
 function SetupBuffers()
