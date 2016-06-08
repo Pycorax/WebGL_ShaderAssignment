@@ -18,6 +18,8 @@ var keysPressed = [];						// Stores a list of keys pressed
 var vMatrix = mat4.create();        		// View Matrix
 var pMatrix = mat4.create();        		// Projection Matrix
 var mMatrix = mat4.create();        		// Model Matrix
+// Animation
+var marathonCubeState = 0;					// 0: Left, 1: Back, 2: Right, 3: Front
 
 /*
 * Callback Code
@@ -68,8 +70,60 @@ function TimeUpdate()
 
 function Animate()
 {
+	// Right Sphere
  	mat4.identity(drawList[0].transform);
  	mat4.rotateY(drawList[0].transform, timeSinceStart * 0.001);
+
+	// The Cube Marathon
+	const CUBE_MOVE_SPEED = 0.005;
+	switch (marathonCubeState)
+	{
+		case 0:
+			if (drawList[4].positionShift[2] >= 9.5)
+			{
+				drawList[4].positionShift[2] = 9.5;
+				marathonCubeState = 1;
+			}
+			else
+			{
+				drawList[4].positionShift[2] += deltaTime * CUBE_MOVE_SPEED;
+			}
+			break;
+		case 1:
+			if (drawList[4].positionShift[0] <= -7.0)
+			{
+				drawList[4].positionShift[0] = -7.0;
+				marathonCubeState = 2;
+			}
+			else
+			{
+				drawList[4].positionShift[0] -= deltaTime * CUBE_MOVE_SPEED;
+			}
+			break;
+		case 2:
+			if (drawList[4].positionShift[2] <= -9.5)
+			{
+				drawList[4].positionShift[2] = -9.5;
+				marathonCubeState = 3;
+			}
+			else
+			{
+				drawList[4].positionShift[2] -= deltaTime * CUBE_MOVE_SPEED;
+			}
+			break;
+		case 3:
+			if (drawList[4].positionShift[0] >= 12.0)
+			{
+				drawList[4].positionShift[0] = 12.0;
+				marathonCubeState = 0;
+			}
+			else
+			{
+				drawList[4].positionShift[0] += deltaTime * CUBE_MOVE_SPEED;
+			}
+			break;
+	}
+
 }
 
 function InputUpdate()
