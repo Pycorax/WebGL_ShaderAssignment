@@ -20,6 +20,7 @@ function Mesh()
 
     // Transforms
     this.transform = mat4.create();
+	this.positionShift = vec3.create();			// Modify this for translation. We are doing this because MMatrix seems to be broken. Hacky solution but it works.
 
     // Material
     this.material = new Material();
@@ -104,46 +105,46 @@ function CreateQuadFunction()
 	];
 }
 
-function CreateCubeFunction()
+function CreateCubeFunction(length)
 {
         // Vertices
         this.vertices =
         [
             // Front Face
-            -1.0, -1.0, 1.0,
-            1.0, -1.0, 1.0,
-            1.0, 1.0, 1.0,
-            -1.0, 1.0, 1.0,
+            -length, -length, length,
+            length, -length, length,
+            length, length, length,
+            -length, length, length,
 
             // Back Face
-            -1.0, -1.0, -1.0,
-            -1.0, 1.0, -1.0,
-            1.0, 1.0, -1.0,
-            1.0, -1.0, -1.0,
+            -length, -length, -length,
+            -length, length, -length,
+            length, length, -length,
+            length, -length, -length,
 
             // Top Face
-            -1.0, 1.0, -1.0,
-            -1.0, 1.0, 1.0,
-            1.0, 1.0, 1.0,
-            1.0, 1.0, -1.0,
+            -length, length, -length,
+            -length, length, length,
+            length, length, length,
+            length, length, -length,
 
             // Bottom Face
-            -1.0, -1.0, -1.0,
-            1.0, -1.0, -1.0,
-            1.0, -1.0, 1.0,
-            -1.0, -1.0, 1.0,
+            -length, -length, -length,
+            length, -length, -length,
+            length, -length, length,
+            -length, -length, length,
 
             // Right Face
-            1.0, -1.0, -1.0,
-            1.0, 1.0, -1.0,
-            1.0, 1.0, 1.0,
-            1.0, -1.0, 1.0,
+            length, -length, -length,
+            length, length, -length,
+            length, length, length,
+            length, -length, length,
 
             // Left Face
-            -1.0, -1.0, -1.0,
-            -1.0, -1.0, 1.0,
-            -1.0, 1.0, 1.0,
-            -1.0, 1.0, -1.0,
+            -length, -length, -length,
+            -length, -length, length,
+            -length, length, length,
+            -length, length, -length,
         ];
 
         /*

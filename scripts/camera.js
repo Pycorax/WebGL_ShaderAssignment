@@ -1,7 +1,7 @@
 function Camera()
 {
-	this.moveSpeed = 0.001;
-	this.lookSpeed = 0.05;
+	this.moveSpeed = 0.01;
+	this.lookSpeed = 0.1;
 	this.defaultPosition = vec3.create();
 	this.defaultTarget = vec3.create();
 	this.defaultUp = vec3.create();

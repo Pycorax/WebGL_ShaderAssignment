@@ -167,6 +167,7 @@
             uniform mat4 uVMatrix;
             uniform mat4 uPMatrix;
 			uniform mat4 uMVInverseTransposeMatrix;
+			uniform vec3 positionShift;
 
             varying vec2 texCoord;
             varying vec3 normal;
@@ -174,12 +175,15 @@
 
             void main(void)
             {
-                gl_Position = uPMatrix * uVMatrix * uMMatrix * vec4(vPos, 1.0);
+				// MMatrix is wonky so let's modify the vertex position directly
+				vec3 truePos = vPos + positionShift;
+
+                gl_Position = uPMatrix * uVMatrix * uMMatrix * vec4(truePos, 1.0);
 
 				// Send these data to the Fragment Shader
                 texCoord = vTex;
                 normal = (uMVInverseTransposeMatrix * vec4(vNorm, 1.0)).xyz;
-                worldPos = (uMMatrix * vec4(vPos, 1.0)).xyz;
+                worldPos = (uMMatrix * vec4(truePos, 1.0)).xyz;
             }
        </script>
 

@@ -23,8 +23,8 @@ function Light()
 
     // Attenuation
     this.kConstant = 1.0;
-    this.kLinear = 0.01;
-    this.kQuadratic = 0.001;
+    this.kLinear = 0.1;
+    this.kQuadratic = 0.01;
 
     // Spot Light Angles
     this.spotInnerAngle = 30.0;
