@@ -68,8 +68,8 @@ function TimeUpdate()
 
 function Animate()
 {
-// 	mat4.identity(drawList[0].transform);
-// 	mat4.rotateY(drawList[0].transform, timeSinceStart * 0.001);
+ 	mat4.identity(drawList[0].transform);
+ 	mat4.rotateY(drawList[0].transform, timeSinceStart * 0.001);
 }
 
 function InputUpdate()
@@ -145,7 +145,7 @@ function Draw()
 	shaderProgram.mvInverseTransposeMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVInverseTransposeMatrix");
 	shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
 	// -- Camera
-	shaderProgram.cameraView = gl.getUniformLocation(shaderProgram, "viewDirection");
+	shaderProgram.cameraPos = gl.getUniformLocation(shaderProgram, "cameraPos");
 	// -- Material
 	shaderProgram.diffuseColor = gl.getUniformLocation(shaderProgram, "diffuseColor");
 	shaderProgram.ambientColor = gl.getUniformLocation(shaderProgram, "ambientColor");
@@ -195,11 +195,8 @@ function Draw()
 	//mat4.translate(vMatrix, camera.position);      // Camera Position
 	mat4.lookAt(camera.position, camera.target, camera.up, vMatrix);
 
-	// Define the Camera View
-	var cameraView = vec3.create();
-	vec3.subtract(camera.position, camera.target, cameraView);
-	vec3.normalize(cameraView);
-	gl.uniform3f(shaderProgram.cameraView, cameraView[0], cameraView[1], cameraView[2]);
+	// Define the Camera Position
+	gl.uniform3f(shaderProgram.cameraPos, camera.position[0], camera.position[1], camera.position[2]);
 
 	// Drawing Objects
 	for (var i = 0; i < drawList.length; ++i)
@@ -235,11 +232,11 @@ function Draw()
 		gl.uniformMatrix4fv(shaderProgram.mMatrixUniform, false, mesh.transform);
 
 		// Send the Inverse Transposed Model Matrix to calculate the correct Normals for Lights that don't follow the Model
-		// var mvInverseTransposeMtx = mat4.create();
-		// mvInverseTransposeMtx = mesh.transform;
-		// mat4.inverse(mvInverseTransposeMtx);
-		// mat4.transpose(mvInverseTransposeMtx);
-		// gl.uniformMatrix4fv(shaderProgram.mvInverseTransposeMatrixUniform, false, mvInverseTransposeMtx);
+		var mvInverseTransposeMtx = mat4.create();
+		mvInverseTransposeMtx = mesh.transform;
+		mat4.inverse(mvInverseTransposeMtx);
+		mat4.transpose(mvInverseTransposeMtx);
+		gl.uniformMatrix4fv(shaderProgram.mvInverseTransposeMatrixUniform, false, mvInverseTransposeMtx);
 
 		// Set the lighting Material uniforms
 		gl.uniform3f(shaderProgram.diffuseColor, mesh.material.diffuse[0], mesh.material.diffuse[1], mesh.material.diffuse[2]);
@@ -287,9 +284,7 @@ function Setup()
 	SetupBuffers();
 
 	// Set the Camera Position
-	camera.position = [0.0, 0.0, -5.0];
-	camera.target = [0.0, 0.0, 1.0];
-	camera.up = [0.0, 1.0, 0.0];
+	camera.Initialize([0.0, 0.0, -5.0], [0.0, 0.0, 1.0], [0.0, 1.0, 0.0]);
 
 	// Render
 	Tick();
@@ -391,21 +386,21 @@ function SetupLights()
 
 	// Set it's params
 	// -- Light 1
-	lightList[0].power = 1.0;
-	lightList[0].position = [0.0, 5.0, 0.0];
-	lightList[0].type = LIGHT_TYPE_DIRECTIONAL;
-	lightList[0].direction = [0, 1, 1];
-	// -- Light 2
-	lightList[1].power = 1.0;
-	lightList[1].position = [5.0, 5.0, 0];
-	lightList[1].type = LIGHT_TYPE_POINT;
+	// lightList[0].power = 0.25;
+	// lightList[0].type = LIGHT_TYPE_DIRECTIONAL;
+	// lightList[0].direction = [1, 1, 0];
+	// lightList[0].color = [1.0, 0.792, 0.219];
+	// // -- Light 2
 	// lightList[1].power = 1.0;
-	// lightList[1].position = [0, 10, 5];
-	// lightList[1].direction = [0, 0, 1];
-	// lightList[1].type = LIGHT_TYPE_DIRECTIONAL;
-	// lightList[2].power = 1.0;
-	// lightList[2].position = [0, 0, 0];
-	// lightList[2].direction = [0, 0, -1];
+	// lightList[1].position = [5.0, -15.0, 0];
+	// lightList[1].type = LIGHT_TYPE_POINT;
+	// -- Light 3
+	lightList[2].power = 1.0;
+	lightList[2].position = [-5, 0, 0];
+	lightList[2].direction = [-1, 0, 0];
+    lightList[2].spotInnerAngle = 5.0;
+    lightList[2].spotOuterAngle = 10.0;
+	lightList[2].type = LIGHT_TYPE_SPOT;
 	// lightList[2].type = LIGHT_TYPE_DIRECTIONAL;
 	// lightList[3].power = 2.0;
 	// lightList[3].position = [0, 0, 0];
@@ -418,31 +413,15 @@ function SetupBuffers()
 	// Floor
 	var mesh = new Mesh();
 	// -- Type
-	mesh.CreateCube()//Sphere(0.5, 0.5, 0.5, 120);
+	mesh.CreateSphere(0.5, 0.5, 0.5, 120);
 	// -- Init
 	mesh.SetupBuffers(gl);
 	mat4.identity(mesh.transform);
-	mat4.translate(mesh.transform, [0.0, -1.0, 25.0]);
-	mat4.scale(mesh.transform, [25.0, 0.01, 25.0]);
 	// -- Texture & Materials
-	SetupTexture("images/floor.png", mesh);
+	SetupTexture("images/cubeTex.png", mesh);
 	mesh.material.specular = [1.0, 1.0, 1.0];
 	// -- Add to the list
 	drawList.push(mesh);
-
-	// Floor
-	var mesh2 = new Mesh();
-	// -- Type
-	mesh2.CreateSphere()//Sphere(0.5, 0.5, 0.5, 120);
-	// -- Init
-	mesh2.SetupBuffers(gl);
-	mat4.identity(mesh2.transform);
-	mat4.translate(mesh2.transform, [0.0, 0.5, 0.0]);
-	// -- Texture & Materials
-	SetupTexture("images/cubeTex.png", mesh2);
-	mesh2.material.specular = [1.0, 1.0, 1.0];
-	// -- Add to the list
-	drawList.push(mesh2);
 }
 
 function SetupTexture(file, mesh)

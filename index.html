@@ -40,7 +40,7 @@
             const int LIGHT_SPOT = 2;
 
             // Camera Info
-            uniform vec3 viewDirection;
+            uniform vec3 cameraPos;
 
             // Lights
             const int MAX_LIGHTS = 8;
@@ -61,7 +61,8 @@
             uniform sampler2D uSampler;
 
             // Function Prototypes
-            float calcAttenuation(Light _light, vec3 dirToThisVertex);
+            float calcAttenuation(Light _light);
+			float calcSpotLightEffect(Light _light, vec3 dirToThisVertex);
 
             void main(void)
             {
@@ -72,7 +73,7 @@
                 vec4 finalColor = vec4(0.0);
 
 				// Normalize the viewDirection
-				vec3 eyeDirection = normalize(-viewDirection);
+				vec3 eyeDirection = normalize(cameraPos - worldPos);
 
 				// Loop through all the lights
 				for (int i = 0; i < MAX_LIGHTS; ++i)
@@ -85,11 +86,11 @@
 	                }
 	                else
 	                {
-	                    lightDir = normalize(worldPos - light[i].position);
+	                    lightDir = normalize(light[i].position - worldPos);
 	                }
 
 	                // Calculate the reflection vector
-	                vec3 reflectDir = normalize((viewDirection.xyz + lightDir) * 0.5);
+	                vec3 reflectDir = normalize((eyeDirection.xyz + lightDir) * 0.5);
 
 	                // Calculate the Ambient
 	                vec4 ambient = vec4(light[i].kAmbient * ambientColor, 1.0);
@@ -100,45 +101,54 @@
 	                finalColor = diffuse + specular;
 
 	                // Add all the values together
-	                gl_FragColor += calcAttenuation(light[i], lightDir) * vec4(ambient + (finalColor * texture2D(uSampler, texCoord)));
+	                gl_FragColor += calcAttenuation(light[i]) * calcSpotLightEffect(light[i], lightDir) * vec4(ambient + (finalColor * texture2D(uSampler, texCoord)));
 				}
             }
 
-            float calcAttenuation(Light _light, vec3 dirToThisVertex)
+            float calcAttenuation(Light _light)
             {
                 float attenuation = 0.0;
 
-                if (_light.type == LIGHT_POINT)
+                if (_light.type != LIGHT_DIRECTIONAL)
                 {
                     float dist = distance(_light.position, worldPos);
                     attenuation = 1.0 / (_light.kConstant + _light.kLinear * dist + _light.kQuadratic * dist * dist);
                 }
-                else if (_light.type == LIGHT_DIRECTIONAL)
+                else
                 {
                     attenuation = 1.0;
                 }
-                else if (_light.type == LIGHT_SPOT)
+
+                return attenuation;
+            }
+
+			float calcSpotLightEffect(Light _light, vec3 dirToThisVertex)
+			{
+				float effect = 1.0;
+
+				if (_light.type == LIGHT_SPOT)
                 {
-                    float cosAngle = dot(_light.direction, dirToThisVertex);
+                    float cosAngle = dot(dirToThisVertex, _light.direction);
                     float cosInner = cos(radians(_light.spotInnerAngle));
                     float cosOuter = cos(radians(_light.spotOuterAngle));
 
                     if (cosInner > cosAngle && cosAngle > cosOuter)
                     {
-                        attenuation = (cosAngle - cosOuter) / (cosInner - cosOuter);
+                        effect = (cosAngle - cosOuter) / (cosInner - cosOuter);
                     }
                     else if (cosAngle >= cosInner)
                     {
-                        attenuation = 1.0;
+                        effect = 1.0;
                     }
-                    else
-                    {
-                        attenuation = 0.0;
-                    }
+					else
+					{
+						effect = 0.0;
+					}
                 }
 
-                return attenuation;
-            }
+                return effect;
+			}
+
        </script>
 
        <script id ="VertexShader" type = "x-shader/x-vertex">
@@ -161,7 +171,7 @@
 
 				// Send these data to the Fragment Shader
                 texCoord = vTex;
-                normal = vNorm;//(uMVInverseTransposeMatrix * vec4(vNorm, 1.0)).xyz;
+                normal = (uMVInverseTransposeMatrix * vec4(vNorm, 1.0)).xyz;
                 worldPos = (uMMatrix * vec4(vPos, 1.0)).xyz;
             }
        </script>
