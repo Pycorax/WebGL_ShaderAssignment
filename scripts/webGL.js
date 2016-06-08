@@ -105,6 +105,9 @@ function InputUpdate()
 				case 'l':
 					camera.LookRight(deltaTime);
 					break;
+				case 'r':
+					camera.Reset();
+					break;
 			}
 		}
 	}

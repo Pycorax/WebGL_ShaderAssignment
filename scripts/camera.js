@@ -1,12 +1,17 @@
 function Camera()
 {
-	this.moveSpeed = 0.01;
-	this.lookSpeed = 0.1;
+	this.moveSpeed = 0.001;
+	this.lookSpeed = 0.05;
+	this.defaultPosition = vec3.create();
+	this.defaultTarget = vec3.create();
+	this.defaultUp = vec3.create();
 	this.position = vec3.create();
 	this.target = vec3.create();
 	this.up = vec3.create();
 
 	// Function Definitions
+	// -- Construction
+	this.Initialize = InitializeFunction;
 	// -- Movement
 	this.MoveForward = MoveForward;
 	this.MoveBackward = MoveBackward;
@@ -17,6 +22,19 @@ function Camera()
 	this.LookDown = LookDown;
 	this.LookLeft = LookLeft;
 	this.LookRight = LookRight;
+	// -- Other
+	this.Reset = ResetFunction;
+}
+
+function InitializeFunction(pos, target, up)
+{
+	this.position = vec3.create(pos);
+	this.target = vec3.create(target);
+	this.up = vec3.create(up);
+
+	this.defaultPosition = vec3.create(pos);
+	this.defaultTarget = vec3.create(target);
+	this.defaultUp =  vec3.create(up);
 }
 
 function MoveForward(deltaTime)
@@ -141,6 +159,13 @@ function LookLeftRight(camera, deltaTime)
 	mat4.multiplyVec3(mtxRot, view);
 	// Calculate the new target
 	vec3.add(camera.position, view, camera.target);
+}
+
+function ResetFunction()
+{
+	vec3.set(this.defaultPosition, this.position);
+	vec3.set(this.defaultTarget, this.target);
+	vec3.set(this.defaultUp, this.up);
 }
 
 // Helper Function
