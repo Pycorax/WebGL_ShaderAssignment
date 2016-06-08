@@ -519,7 +519,7 @@ function SetupBuffers()
 	mat4.identity(mesh.transform);
 	mesh.positionShift = [0.0, 0.0, 0.0];
 	// -- Texture & Materials
-	SetupTexture("images/cubeTex.png", mesh);
+	SetupTexture("images/sphere.png", mesh);
 	mesh.material.specular = [1.0, 1.0, 1.0];
 	// -- Add to the list
 	drawList.push(mesh);
@@ -533,7 +533,7 @@ function SetupBuffers()
 	mat4.identity(mesh2.transform);
 	mesh2.positionShift = [5.0, 0.0, 0.0];
 	// -- Texture & Materials
-	SetupTexture("images/cubeTex.png", mesh2);
+	SetupTexture("images/sphere.png", mesh2);
 	mesh2.material.specular = [1.0, 1.0, 1.0];
 	// -- Add to the list
 	drawList.push(mesh2);
@@ -547,7 +547,7 @@ function SetupBuffers()
 	mat4.identity(mesh3.transform);
 	mesh3.positionShift = [2.5, 2.5, 0.0];
 	// -- Texture & Materials
-	SetupTexture("images/cubeTex.png", mesh3);
+	SetupTexture("images/sphere.png", mesh3);
 	mesh3.material.specular = [1.0, 1.0, 1.0];
 	// -- Add to the list
 	drawList.push(mesh3);
@@ -561,7 +561,7 @@ function SetupBuffers()
 	mat4.identity(mesh4.transform);
 	mesh4.positionShift = [2.5, -11.0, 0.0];
 	// -- Texture & Materials
-	SetupTexture("images/cubeTex.png", mesh4);
+	SetupTexture("images/floor.png", mesh4);
 	mesh4.material.specular = [1.0, 1.0, 1.0];
 	// -- Add to the list
 	drawList.push(mesh4);
