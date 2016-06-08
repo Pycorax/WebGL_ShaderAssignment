@@ -68,8 +68,8 @@ function TimeUpdate()
 
 function Animate()
 {
-	mat4.identity(drawList[0].transform);
-	mat4.rotateY(drawList[0].transform, timeSinceStart * 0.001);
+// 	mat4.identity(drawList[0].transform);
+// 	mat4.rotateY(drawList[0].transform, timeSinceStart * 0.001);
 }
 
 function InputUpdate()
@@ -127,7 +127,6 @@ function Draw()
 	// -- Position
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "vPos");
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-
 	// -- Texture
 	shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "vTex");
 	gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
@@ -419,7 +418,7 @@ function SetupBuffers()
 	// -- Init
 	mesh.SetupBuffers(gl);
 	mat4.identity(mesh.transform);
-	//mat4.translate(mesh.transform, [0.0, -1.0, 0.0]);
+	mat4.translate(mesh.transform, [0.0, -1.0, 0.0]);
 	//mat4.scale(mesh.transform, [100.0, 0.01, 100.0]);
 	//mat4.rotateX(mesh.transform, 90);
 	// -- Texture & Materials
@@ -428,20 +427,20 @@ function SetupBuffers()
 	drawList.push(mesh);
 
 	// Objects
-	for (var i = 0; i < 1; ++i)
-	{
-		var mesh2 = new Mesh();
-		// -- Type
-		mesh2.CreateCube();
-		// -- Init
-		mesh2.SetupBuffers(gl);
-		mat4.identity(mesh2.transform);
-		mat4.translate(mesh2.transform, [5.0, 0.0, 0.0]);
-		// -- Texture & Materials
-		SetupTexture("images/cubeTex.png", mesh2);
-		// -- Add to the list
-		drawList.push(mesh2);
-	}
+	// for (var i = 0; i < 1; ++i)
+	// {
+	// 	var mesh2 = new Mesh();
+	// 	// -- Type
+	// 	mesh2.CreateCube();
+	// 	// -- Init
+	// 	mesh2.SetupBuffers(gl);
+	// 	mat4.identity(mesh2.transform);
+	// 	mat4.translate(mesh2.transform, [5.0, 0.0, 0.0]);
+	// 	// -- Texture & Materials
+	// 	SetupTexture("images/cubeTex.png", mesh2);
+	// 	// -- Add to the list
+	// 	drawList.push(mesh2);
+	// }
 }
 
 function SetupTexture(file, mesh)
