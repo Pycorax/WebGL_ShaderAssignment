@@ -202,9 +202,6 @@ function Draw()
 	{
 		var mesh = drawList[i];
 
-		// Set the model transform matrix to be this object's transform
-		mMatrix = mesh.transform
-
 		// Bind and enable the vertex positions
 		gl.bindBuffer(gl.ARRAY_BUFFER, mesh.vertexBuffer);
 		gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
@@ -231,10 +228,10 @@ function Draw()
 		// Set the matrix uniforms for MVP
 		gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
 		gl.uniformMatrix4fv(shaderProgram.vMatrixUniform, false, vMatrix);
-		gl.uniformMatrix4fv(shaderProgram.mMatrixUniform, false, mMatrix);
+		gl.uniformMatrix4fv(shaderProgram.mMatrixUniform, false, mesh.transform);
 
 		var mvInverseTransposeMtx = mat4.create();
-		mvInverseTransposeMtx = mMatrix;
+		mvInverseTransposeMtx = mesh.transform;
 		mat4.inverse(mvInverseTransposeMtx);
 		mat4.transpose(mvInverseTransposeMtx);
 		gl.uniformMatrix4fv(shaderProgram.mvInverseTransposeMatrixUniform, false, mvInverseTransposeMtx);
@@ -413,35 +410,35 @@ function SetupLights()
 function SetupBuffers()
 {
 	// Floor
-	var mesh = new Mesh();
-	// -- Type
-	mesh.CreateSphere(0.5, 0.5, 0.5, 120);
-	// -- Init
-	mesh.SetupBuffers(gl);
-	mat4.identity(mesh.transform);
-	//mat4.translate(mesh.transform, [0.0, -1.0, 0.0]);
-	//mat4.scale(mesh.transform, [100.0, 0.01, 100.0]);
-	//mat4.rotateX(mesh.transform, 90);
-	// -- Texture & Materials
-	SetupTexture("images/cubeTex.png", mesh); // mesh.material.diffuse = [1.0, 1.0, 1.0];
-	// -- Add to the list
-	drawList.push(mesh);
+	// var mesh = new Mesh();
+	// // -- Type
+	// mesh.CreateSphere(0.5, 0.5, 0.5, 120);
+	// // -- Init
+	// mesh.SetupBuffers(gl);
+	// mat4.identity(mesh.transform);
+	// //mat4.translate(mesh.transform, [0.0, -1.0, 0.0]);
+	// //mat4.scale(mesh.transform, [100.0, 0.01, 100.0]);
+	// //mat4.rotateX(mesh.transform, 90);
+	// // -- Texture & Materials
+	// SetupTexture("images/cubeTex.png", mesh); // mesh.material.diffuse = [1.0, 1.0, 1.0];
+	// // -- Add to the list
+	// drawList.push(mesh);
 
 	// Objects
-	// for (var i = 0; i < 10; ++i)
-	// {
-	// 	var mesh2 = new Mesh();
-	// 	// -- Type
-	// 	mesh2.CreateCube();
-	// 	// -- Init
-	// 	mesh2.SetupBuffers(gl);
-	// 	mat4.identity(mesh2.transform);
-	// 	mat4.translate(mesh2.transform, [-1.0 - i*2, 0.0, 0.0]);
-	// 	// -- Texture & Materials
-	// 	SetupTexture("images/cubeTex.png", mesh2); mesh2.material.diffuse = [1.0, 1.0, 1.0];
-	// 	// -- Add to the list
-	// 	drawList.push(mesh);
-	// }
+	for (var i = 0; i < 1; ++i)
+	{
+		var mesh2 = new Mesh();
+		// -- Type
+		mesh2.CreateCube();
+		// -- Init
+		mesh2.SetupBuffers(gl);
+		mat4.identity(mesh2.transform);
+		mat4.translate(mesh2.transform, [2.0 * i, 0.0, 0.0]);
+		// -- Texture & Materials
+		SetupTexture("images/cubeTex.png", mesh2); mesh2.material.diffuse = [1.0, 1.0, 1.0];
+		// -- Add to the list
+		drawList.push(mesh2);
+	}
 }
 
 function SetupTexture(file, mesh)
