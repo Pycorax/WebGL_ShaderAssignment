@@ -53,6 +53,11 @@
             uniform vec3 specularColor;
             uniform float shininess;
 
+			// Colour Swap
+			uniform bool colourSwapEnabled;
+			uniform vec3 colourSwapFrom;
+			uniform vec3 colourSwapTo;
+
             // Fragment Details
             varying vec2 texCoord;
             varying vec3 normal;
@@ -107,8 +112,14 @@
 	                vec4 specular = light[i].power * vec4(light[i].kSpecular * specularColor * pow(max(dot(normal, reflectDir), 0.0), shininess), 1.0);
 	                finalColor = diffuse + specular;
 
+					vec4 textureColor = texture2D(uSampler, texCoord);
+					if (colourSwapEnabled && textureColor == vec4(colourSwapFrom, 1.0))
+					{
+						textureColor = vec4(colourSwapTo, 1.0);
+					}
+
 	                // Add all the values together
-	                gl_FragColor += calcAttenuation(light[i]) * calcSpotLightEffect(light[i], lightDir) * vec4(ambient + (finalColor * texture2D(uSampler, texCoord)));
+	                gl_FragColor += calcAttenuation(light[i]) * calcSpotLightEffect(light[i], lightDir) * vec4(ambient + (finalColor * textureColor));
 				}
             }
 

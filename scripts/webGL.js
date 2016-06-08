@@ -234,6 +234,10 @@ function Draw()
 	shaderProgram.specularColor = gl.getUniformLocation(shaderProgram, "specularColor");
 	shaderProgram.shininess = gl.getUniformLocation(shaderProgram, "shininess");
 
+	shaderProgram.colourSwapEnabled = gl.getUniformLocation(shaderProgram, "colourSwapEnabled");
+	shaderProgram.colourSwapFrom = gl.getUniformLocation(shaderProgram, "colourSwapFrom");
+	shaderProgram.colourSwapTo = gl.getUniformLocation(shaderProgram, "colourSwapTo");
+
 	// Lights
 	// -- Loop through all the lights
 	for (var currLight = 0; currLight < MAX_LIGHTS && currLight < lightList.length; ++currLight)
@@ -327,6 +331,11 @@ function Draw()
 		gl.uniform3f(shaderProgram.ambientColor, mesh.material.ambient[0], mesh.material.ambient[1], mesh.material.ambient[2]);
 		gl.uniform3f(shaderProgram.specularColor, mesh.material.specular[0], mesh.material.specular[1], mesh.material.specular[2]);
 		gl.uniform1f(shaderProgram.shininess, mesh.material.shininess);
+
+		// Colour Swap
+		gl.uniform1i(shaderProgram.colourSwapEnabled, mesh.colourSwapEnabled);
+		gl.uniform3f(shaderProgram.colourSwapFrom, mesh.colourSwapFrom[0], mesh.colourSwapFrom[1], mesh.colourSwapFrom[2]);
+		gl.uniform3f(shaderProgram.colourSwapTo, mesh.colourSwapTo[0], mesh.colourSwapTo[1], mesh.colourSwapTo[2]);
 
 		// Draw the objects
 		gl.drawElements(gl.TRIANGLES, mesh.indices.length, gl.UNSIGNED_SHORT, 0);
@@ -570,6 +579,35 @@ function SetupBuffers()
 	mesh5.material.specular = [1.0, 1.0, 1.0];
 	// -- Add to the list
 	drawList.push(mesh5);
+
+	/*
+	 * Colour Swap Showcase
+	 */
+	const CUBE_SIZE = 0.5;
+	const CUBE_X = 3;
+	const CUBE_Y = 3;
+	const VARIATION_X = 1.0 / CUBE_X;
+	const VARIATION_Y = 1.0 / CUBE_Y;
+	for (var x = 0; x < CUBE_X; ++x)
+	{
+		for (var y = 0; y < CUBE_Y; ++y)
+		{
+			var mesh = new Mesh();
+			// -- Type
+			mesh.CreateCube(CUBE_SIZE);
+			// -- Init
+			mesh.SetupBuffers(gl);
+			mat4.identity(mesh.transform);
+			mesh.positionShift = [1.5 + CUBE_SIZE * 2.0 * x, -0.5 + CUBE_SIZE * 2.0 * y, 10.5];
+			// -- Texture & Materials
+			SetupTexture("images/colorSwapTex.png", mesh);
+			mesh.material.specular = [1.0, 1.0, 1.0];
+			// -- Colour Swap
+			mesh.SetColourSwap(true, [1.0, 1.0, 1.0], [0.9, VARIATION_X * x, VARIATION_Y * y]);
+			// -- Add to the list
+			drawList.push(mesh);
+		}
+	}
 }
 
 function SetupTexture(file, mesh)

@@ -25,6 +25,11 @@ function Mesh()
     // Material
     this.material = new Material();
 
+	// Colour Swap
+	this.colourSwapEnabled = false;
+	this.colourSwapFrom = vec3.create();
+	this.colourSwapTo = vec3.create();
+
     // Function Definitions
 	// -- Setup
 	this.SetupBuffers = SetupBuffersFunction;
@@ -32,6 +37,8 @@ function Mesh()
 	this.CreateQuad = CreateQuadFunction;
     this.CreateCube = CreateCubeFunction;
 	this.CreateSphere = CreateSphereFunction;
+	// -- Colour Swap
+	this.SetColourSwap = SetColourSwapFunction;
 }
 
 function SetupBuffersFunction(gl)
@@ -264,65 +271,76 @@ function CreateCubeFunction(length)
         ];
     }
 
-	function CreateSphereFunction(radiusLength, radiusWidth, radiusHeight, numSlice)
+function CreateSphereFunction(radiusLength, radiusWidth, radiusHeight, numSlice)
+{
+	// Wrap around in the vertical
+	for (var height = 0; height <= numSlice; height++)
 	{
-		// Wrap around in the vertical
-		for (var height = 0; height <= numSlice; height++)
+		// Angle and Trigo values we willl need to calculate position
+		var theta = height * Math.PI / numSlice;
+		var sinTheta = Math.sin(theta);
+		var cosTheta = Math.cos(theta);
+
+		// Wrap around in the horizontal
+		for (var width = 0; width <= numSlice; width++)
 		{
 			// Angle and Trigo values we willl need to calculate position
-			var theta = height * Math.PI / numSlice;
-			var sinTheta = Math.sin(theta);
-			var cosTheta = Math.cos(theta);
+			var phi = width * 2 * Math.PI / numSlice;
+			var sinPhi = Math.sin(phi);
+			var cosPhi = Math.cos(phi);
 
-			// Wrap around in the horizontal
-			for (var width = 0; width <= numSlice; width++)
-			{
-				// Angle and Trigo values we willl need to calculate position
-				var phi = width * 2 * Math.PI / numSlice;
-				var sinPhi = Math.sin(phi);
-				var cosPhi = Math.cos(phi);
+			// Calculate the normals and store it coz we will need it to calculate vertex position
+			var xNormal = cosPhi * sinTheta;
+			var yNormal = cosTheta;
+			var zNormal = sinPhi * sinTheta;
 
-				// Calculate the normals and store it coz we will need it to calculate vertex position
-				var xNormal = cosPhi * sinTheta;
-				var yNormal = cosTheta;
-				var zNormal = sinPhi * sinTheta;
+			// Vertices
+			this.vertices.push(radiusLength * xNormal);
+			this.vertices.push(radiusWidth * yNormal);
+			this.vertices.push(radiusHeight * zNormal);
 
-				// Vertices
-				this.vertices.push(radiusLength * xNormal);
-				this.vertices.push(radiusWidth * yNormal);
-				this.vertices.push(radiusHeight * zNormal);
+			// Normals
+			this.normals.push(xNormal);
+			this.normals.push(yNormal);
+			this.normals.push(zNormal);
 
-				// Normals
-				this.normals.push(xNormal);
-				this.normals.push(yNormal);
-				this.normals.push(zNormal);
-
-				// Tex Coords
-				this.texCoords.push(1 - (width / numSlice));
-				this.texCoords.push(1 - (height / numSlice));
-			}
-		}
-
-		// Wrap around in the vertical
-		for (var height = 0; height < numSlice; height++)
-		{
-			// Wrap around in the horizontal
-			for (var width = 0; width < numSlice; width++)
-			{
-				// Calculate the index at which is the first index (top left)
-				var first = (height * (numSlice + 1)) + width;
-				// Calculate the index at which is the second index (bottom left)
-				var second = first + numSlice + 1;
-
-				// Mark the first triangle
-				this.indices.push(first);				// top left
-				this.indices.push(second);				// bottom left
-				this.indices.push(first + 1);			// top right
-
-				// Mark the second triangle
-				this.indices.push(second);				// bottom left
-				this.indices.push(second + 1);			// bottom right
-				this.indices.push(first + 1);			// top right
-			}
+			// Tex Coords
+			this.texCoords.push(1 - (width / numSlice));
+			this.texCoords.push(1 - (height / numSlice));
 		}
 	}
+
+	// Wrap around in the vertical
+	for (var height = 0; height < numSlice; height++)
+	{
+		// Wrap around in the horizontal
+		for (var width = 0; width < numSlice; width++)
+		{
+			// Calculate the index at which is the first index (top left)
+			var first = (height * (numSlice + 1)) + width;
+			// Calculate the index at which is the second index (bottom left)
+			var second = first + numSlice + 1;
+
+			// Mark the first triangle
+			this.indices.push(first);				// top left
+			this.indices.push(second);				// bottom left
+			this.indices.push(first + 1);			// top right
+
+			// Mark the second triangle
+			this.indices.push(second);				// bottom left
+			this.indices.push(second + 1);			// bottom right
+			this.indices.push(first + 1);			// top right
+		}
+	}
+}
+
+function SetColourSwapFunction(enabled, fromCol, toCol)
+{
+	if (enabled)
+	{
+		this.colourSwapFrom = fromCol;
+		this.colourSwapTo = toCol;
+	}
+
+	this.colourSwapEnabled = enabled;
+}
