@@ -232,11 +232,11 @@ function Draw()
 		gl.uniformMatrix4fv(shaderProgram.mMatrixUniform, false, mesh.transform);
 
 		// Send the Inverse Transposed Model Matrix to calculate the correct Normals for Lights that don't follow the Model
-		var mvInverseTransposeMtx = mat4.create();
-		mvInverseTransposeMtx = mesh.transform;
-		mat4.inverse(mvInverseTransposeMtx);
-		mat4.transpose(mvInverseTransposeMtx);
-		gl.uniformMatrix4fv(shaderProgram.mvInverseTransposeMatrixUniform, false, mvInverseTransposeMtx);
+		// var mvInverseTransposeMtx = mat4.create();
+		// mvInverseTransposeMtx = mesh.transform;
+		// mat4.inverse(mvInverseTransposeMtx);
+		// mat4.transpose(mvInverseTransposeMtx);
+		// gl.uniformMatrix4fv(shaderProgram.mvInverseTransposeMatrixUniform, false, mvInverseTransposeMtx);
 
 		// Set the lighting Material uniforms
 		gl.uniform3f(shaderProgram.diffuseColor, mesh.material.diffuse[0], mesh.material.diffuse[1], mesh.material.diffuse[2]);
@@ -387,14 +387,15 @@ function SetupLights()
 	}
 
 	// Set it's params
+	// -- Light 1
 	lightList[0].power = 1.0;
-	lightList[0].position = [-5, 0.5, -5];
-	lightList[0].type = LIGHT_TYPE_POINT;
-	lightList[0].direction = [0, 0, 1];
-	// lightList[1].power = 1.0;
-	// lightList[1].position = [5, 0.5, -1];
-	// lightList[1].type = LIGHT_TYPE_POINT;
-	// lightList[1].direction = [0, 0, 1];
+	lightList[0].position = [0.0, 5.0, 0.0];
+	lightList[0].type = LIGHT_TYPE_DIRECTIONAL;
+	lightList[0].direction = [0, 1, 1];
+	// -- Light 2
+	lightList[1].power = 1.0;
+	lightList[1].position = [5.0, 5.0, 0];
+	lightList[1].type = LIGHT_TYPE_POINT;
 	// lightList[1].power = 1.0;
 	// lightList[1].position = [0, 10, 5];
 	// lightList[1].direction = [0, 0, 1];
@@ -414,33 +415,31 @@ function SetupBuffers()
 	// Floor
 	var mesh = new Mesh();
 	// -- Type
-	mesh.CreateSphere(0.5, 0.5, 0.5, 120);
+	mesh.CreateCube()//Sphere(0.5, 0.5, 0.5, 120);
 	// -- Init
 	mesh.SetupBuffers(gl);
 	mat4.identity(mesh.transform);
-	mat4.translate(mesh.transform, [0.0, -1.0, 0.0]);
-	//mat4.scale(mesh.transform, [100.0, 0.01, 100.0]);
-	//mat4.rotateX(mesh.transform, 90);
+	mat4.translate(mesh.transform, [0.0, -1.0, 25.0]);
+	mat4.scale(mesh.transform, [25.0, 0.01, 25.0]);
 	// -- Texture & Materials
-	SetupTexture("images/cubeTex.png", mesh); // mesh.material.diffuse = [1.0, 1.0, 1.0];
+	SetupTexture("images/floor.png", mesh);
+	mesh.material.specular = [1.0, 1.0, 1.0];
 	// -- Add to the list
 	drawList.push(mesh);
 
-	// Objects
-	// for (var i = 0; i < 1; ++i)
-	// {
-	// 	var mesh2 = new Mesh();
-	// 	// -- Type
-	// 	mesh2.CreateCube();
-	// 	// -- Init
-	// 	mesh2.SetupBuffers(gl);
-	// 	mat4.identity(mesh2.transform);
-	// 	mat4.translate(mesh2.transform, [5.0, 0.0, 0.0]);
-	// 	// -- Texture & Materials
-	// 	SetupTexture("images/cubeTex.png", mesh2);
-	// 	// -- Add to the list
-	// 	drawList.push(mesh2);
-	// }
+	// Floor
+	var mesh2 = new Mesh();
+	// -- Type
+	mesh2.CreateSphere()//Sphere(0.5, 0.5, 0.5, 120);
+	// -- Init
+	mesh2.SetupBuffers(gl);
+	mat4.identity(mesh2.transform);
+	mat4.translate(mesh2.transform, [0.0, 0.5, 0.0]);
+	// -- Texture & Materials
+	SetupTexture("images/cubeTex.png", mesh2);
+	mesh2.material.specular = [1.0, 1.0, 1.0];
+	// -- Add to the list
+	drawList.push(mesh2);
 }
 
 function SetupTexture(file, mesh)
