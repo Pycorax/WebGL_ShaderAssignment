@@ -23,6 +23,7 @@
                 int type;
                 vec3 position;
                 vec3 direction;
+				vec3 color;
                 float kAmbient;
                 float kDiffuse;
                 float kSpecular;
@@ -94,7 +95,7 @@
 	                vec4 ambient = vec4(light[i].kAmbient * ambientColor, 1.0);
 
 	                // Calculate the Diffuse and Specular
-	                vec4 diffuse = light[i].power * vec4(light[i].kDiffuse * diffuseColor * max(dot(normal, lightDir), 0.0), 1.0);
+	                vec4 diffuse = light[i].power * vec4(light[i].kDiffuse * diffuseColor * light[i].color * max(dot(normal, lightDir), 0.0), 1.0);
 	                vec4 specular = light[i].power * vec4(light[i].kSpecular * specularColor * pow(max(dot(normal, reflectDir), 0.0), shininess), 1.0);
 	                finalColor = diffuse + specular;
 

@@ -12,6 +12,8 @@ function Light()
     this.type = LIGHT_TYPE_POINT;
     this.position = vec3.create();
     this.direction = vec3.create();
+	this.color = vec3.create();
+	this.color = [1.0, 1.0, 1.0];
 
     // Lighting Coefficients
     this.kAmbient = 1.0;
